@@ -1,0 +1,35 @@
+{
+  "name": "instagram-node-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/server.js",
+  "scripts": {
+    "build-ts": "tsc",
+    "start": "npm run serve",
+    "serve": "node dist/server.js",
+    "watch-node": "nodemon dist/server.js",
+    "watch-ts": "tsc -w"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "dotenv": "^8.0.0",
+    "fc": "^1.5.2",
+    "is-url": "^1.2.4",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7",
+    "tough-cookie": "^3.0.1",
+    "tough-cookie-filestore2": "^1.0.0",
+    "ts-node": "^8.1.0",
+    "useragent-from-seed": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^6.1.1",
+    "@types/node": "^12.0.0",
+    "@types/request-promise-native": "^1.0.16",
+    "nodemon": "^1.19.0",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
+  }
+}
