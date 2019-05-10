@@ -1,8 +1,27 @@
+import Bot from "./bot";
+import makeUserSource, { UserSourceConfig } from "../userSources";
+import makeActionMaker, { ActionMakerConfig } from "../actionMakers";
+import Scheduler, { ScheduleConfig } from "../scheduler";
 
+interface StrategyConfig {
+  schedule: ScheduleConfig,
+  userSource: UserSourceConfig,
+  actions: ActionMakerConfig
+}
 
-const botBuilder = function (strategy) {
+function botBuild(strategy: string) {
+  const config = require('../../config.json');
+  const strategyConfig = config.strategies[strategy] as StrategyConfig;
 
-};
+  if (!strategyConfig) {
+    throw new Error('Стратегия работы бота не найдена');
+  }
 
+  const userSource = makeUserSource(strategyConfig.userSource);
+  const actionMaker = makeActionMaker(strategyConfig.actions);
+  const scheduler = new Scheduler(strategyConfig.schedule);
 
-export default botBuilder;
+  return new Bot(scheduler, userSource, actionMaker);
+}
+
+export default botBuild;
