@@ -37,8 +37,8 @@ class Bot extends EventEmitter implements BotInterface {
     clearInterval(this.timer);
   }
 
-  private runIteration() {
-    const user = this.userSource.getNext();
+  private async runIteration() {
+    const user = await this.userSource.getNext();
     this.actionMaker.runActions(user);
   }
 }

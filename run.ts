@@ -14,6 +14,6 @@ const client = new Instagram({ username, password, cookieStorePath: './store/coo
     console.info('Login success.');
   }
 
-  const bot = botBuild('traditional');
+  const bot = botBuild('traditional', client);
   bot.start();
 })();

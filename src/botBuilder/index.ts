@@ -9,7 +9,7 @@ interface StrategyConfig {
   actions: ActionMakerConfig
 }
 
-function botBuild(strategy: string) {
+function botBuild(strategy: string, client) {
   const config = require('../../config.json');
   const strategyConfig = config.strategies[strategy] as StrategyConfig;
 
@@ -17,8 +17,8 @@ function botBuild(strategy: string) {
     throw new Error('Стратегия работы бота не найдена');
   }
 
-  const userSource = makeUserSource(strategyConfig.userSource);
-  const actionMaker = makeActionMaker(strategyConfig.actions);
+  const userSource = makeUserSource(strategyConfig.userSource, client);
+  const actionMaker = makeActionMaker(strategyConfig.actions, client);
   const scheduler = new Scheduler(strategyConfig.schedule);
 
   return new Bot(scheduler, userSource, actionMaker);

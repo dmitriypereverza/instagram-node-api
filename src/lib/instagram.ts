@@ -14,7 +14,7 @@ const baseUrl = 'https://www.instagram.com';
 import FileCookieStore from "tough-cookie-filestore2";
 
 
-class Instagram {
+export default class Instagram {
   private credentials;
   private request;
   private _sharedData;
@@ -65,7 +65,7 @@ class Instagram {
     password = password || this.credentials.password;
 
     // Get CSRFToken from cookie before login
-    let value;
+    let value = '';
     await this.request('/', { resolveWithFullResponse: true }).then(res => {
       const pattern = new RegExp(/(csrf_token":")\w+/);
       const matches = res.toJSON().body.match(pattern);
@@ -378,7 +378,7 @@ class Instagram {
     )
   }
 
-  async getMediaFeedByHashtag({ hashtag }) {
+  async getMediaFeedByHashtag(hashtag) {
     return this.request(`/explore/tags/${hashtag}/?__a=1`).then(
       data => data.graphql.hashtag
     )
@@ -390,7 +390,7 @@ class Instagram {
     }).then(data => data.venues)
   }
 
-  async getMediaByShortcode({ shortcode }) {
+  async getMediaByShortcode(shortcode) {
     return this.request(`/p/${shortcode}/?__a=1`).then(
       data => data.graphql.shortcode_media
     )
@@ -472,5 +472,3 @@ class Instagram {
       .then(response => response.data.user)
   }
 }
-
-export default Instagram;

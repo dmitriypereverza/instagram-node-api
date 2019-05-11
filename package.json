@@ -16,6 +16,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^8.0.0",
     "fc": "^1.5.2",
+    "fs": "0.0.1-security",
     "is-url": "^1.2.4",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",

@@ -20,6 +20,6 @@ export interface ActionMakerConfig {
   }
 }
 
-export default function makeActionMaker(config: ActionMakerConfig) {
-  return new DefaultActionMaker(config);
+export default function makeActionMaker(config: ActionMakerConfig, client) {
+  return new DefaultActionMaker(config, client);
 };
