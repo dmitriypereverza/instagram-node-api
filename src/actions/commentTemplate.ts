@@ -40,8 +40,9 @@ export default class CommentTemplate implements ActionInterface {
       });
 
       const post = transactionBundle.posts[this.config.postNumber - 1];
-      await client.addComment(post.id, resultComment);
+      // await client.addComment(post.id, resultComment);
 
+      console.log(resultComment);
       resolve();
     });
   }

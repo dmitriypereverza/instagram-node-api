@@ -13,13 +13,13 @@ export default class ListSource implements UserSourceInterface {
     this.config = config;
     this.client = client;
 
-    this.userNameList = this.originalUserNameList;
+    this.userNameList = this.originalUserNameList.slice();
   }
 
   async getNext() {
     if (!this.userNameList.length) {
       if (this.config.isCircle) {
-        this.userNameList = this.originalUserNameList;
+        this.userNameList = this.originalUserNameList.slice();
       } else {
         return;
       }

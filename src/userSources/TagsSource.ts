@@ -19,7 +19,6 @@ export default class TagsSource implements UserSourceInterface {
   async getNext() {
     const tag = await this.getNextTag() as any;
     if (!tag) {
-      console.log('Тег не найден');
       return;
     }
     return tag.owner;
@@ -35,19 +34,14 @@ export default class TagsSource implements UserSourceInterface {
   private async takeNewTagsFeed () {
     if (!this.tagList.length) {
 
-      console.log('Tag list is over');
       if (this.config.isCircle) {
-        console.log('But we have is Circle!!');
-
-        this.tagList = this.originalTagList;
+        this.tagList = this.originalTagList.slice();
       } else {
         return [];
       }
     }
     const tag = this.tagList.shift();
 
-
-    console.log(`Get tags feed [${tag}]`);
     let { edge_hashtag_to_media: { edges: tags } } = await this.client.getMediaFeedByHashtag(tag);
     tags = tags.map(tag => tag.node);
 
