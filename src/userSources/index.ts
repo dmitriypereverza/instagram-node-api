@@ -15,7 +15,7 @@ export default function makeUserSource(config: UserSourceConfig, client): UserSo
 
   switch (config.type) {
     case "hashTag":
-      return new TagsSource(dataForUserSource, dataForUserSource, client);
+      return new TagsSource(config.source, dataForUserSource, client);
     case "geo":
       return {} as UserSourceInterface;
     case "list":

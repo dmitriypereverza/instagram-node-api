@@ -4,7 +4,8 @@ import Instagram from "../lib/instagram";
 export interface UserSourceByTypeConfig {
   type: "list" | "file",
   data: any,
-  isCircle: boolean
+  isCircle: boolean,
+  getPerOnce: number,
 }
 
 export default class TagsSource implements UserSourceInterface {
@@ -19,7 +20,7 @@ export default class TagsSource implements UserSourceInterface {
     this.config = config;
     this.client = client;
 
-    this.tagList = this.originalTagList;
+    this.tagList = this.originalTagList.slice();
   }
 
   async getNext() {
@@ -40,14 +41,27 @@ export default class TagsSource implements UserSourceInterface {
 
   private async takeNewTagsFeed () {
     if (!this.tagList.length) {
+
+      console.log('Tag list is over');
       if (this.config.isCircle) {
+        console.log('But we have is Circle!!');
+
         this.tagList = this.originalTagList;
       } else {
         return [];
       }
     }
     const tag = this.tagList.shift();
-    let { edge_hashtag_to_media: { edges } } = await this.client.getMediaFeedByHashtag(tag);
-    return edges.map(tag => tag.node);
+
+
+    console.log(`Get tags feed [${tag}]`);
+    let { edge_hashtag_to_media: { edges: tags } } = await this.client.getMediaFeedByHashtag(tag);
+    tags = tags.map(tag => tag.node);
+
+    if (this.config.getPerOnce) {
+      tags = tags.slice(0, this.config.getPerOnce);
+    }
+
+    return tags;
   }
 }
