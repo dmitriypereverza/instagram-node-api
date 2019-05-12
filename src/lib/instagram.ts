@@ -146,7 +146,7 @@ export default class Instagram {
     return this.request('/?__a=1').then(data => data.graphql.user)
   }
 
-  async getUserByUsername({ username }) {
+  async getUserByUsername(username) {
     return this.request({
       uri: `/${username}/?__a=1`,
       headers: {

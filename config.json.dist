@@ -1,0 +1,33 @@
+{
+  "strategies": {
+    "traditional": {
+      "schedule": {
+        "delayAction": {
+          "from": 10,
+          "to": 12
+        }
+      },
+      "userSource": {
+        "type": "hashTag",
+        "source": {
+          "type": "list",
+          "data": ["draw", "paint"],
+          "isCircle": true,
+          "getPerOnce": 2
+        }
+      },
+      "actions": {
+        "items": [
+          ["likeByIndex", { "postNumber": 1 }],
+          ["wait", { "timeSeconds": 30 }],
+          ["likesRange", { "count": 2, "from": 2, "to": 10 }],
+          ["wait", { "timeSeconds": 55 }],
+          ["comment", { "postNumber": 1, "text": "Wow" }],
+          ["commentTemplate", { "postNumber": 1, "filePath": "commentsTmplRu.txt" }],
+          ["follow"]
+        ]
+      }
+    }
+  }
+}
+

@@ -8,5 +8,5 @@ yarn-error.log*
 node_modules/
 .env
 config.json
-store/cookies.json
+store/*
 dist

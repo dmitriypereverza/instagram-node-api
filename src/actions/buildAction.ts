@@ -4,6 +4,8 @@ import Wait from "./wait";
 import LikesRange from "./likesRange";
 import Follow from "./follow";
 import WaitRange from "./waitRange";
+import Comment from "./comment";
+import CommentTemplate from "./commentTemplate";
 
 export interface ActionInterface {
   run: (user, client: Instagram) => void;
@@ -16,6 +18,10 @@ export default function buildActions ([ code, params ]): ActionInterface {
       return new LikeByIndex(params);
     case "wait":
       return new Wait(params);
+    case "comment":
+      return new Comment(params);
+    case "commentTemplate":
+      return new CommentTemplate(params);
     case "waitRange":
       return new WaitRange(params);
     case "likesRange":

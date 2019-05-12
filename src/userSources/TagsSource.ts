@@ -1,12 +1,5 @@
-import { UserSourceInterface } from "./index";
+import { UserSourceByTypeConfig, UserSourceInterface } from "./index";
 import Instagram from "../lib/instagram";
-
-export interface UserSourceByTypeConfig {
-  type: "list" | "file",
-  data: any,
-  isCircle: boolean,
-  getPerOnce: number,
-}
 
 export default class TagsSource implements UserSourceInterface {
   private readonly config: UserSourceByTypeConfig;
