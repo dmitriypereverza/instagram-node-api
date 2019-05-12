@@ -418,7 +418,7 @@ export default class Instagram {
     return this.request.post(`/web/friendships/${userId}/ignore/`)
   }
 
-  async follow({ userId }) {
+  async follow(userId) {
     return this.request.post(`/web/friendships/${userId}/follow/`)
   }
 
@@ -434,7 +434,7 @@ export default class Instagram {
     return this.request.post(`/web/friendships/${userId}/unblock/`)
   }
 
-  async like({ mediaId }) {
+  async like(mediaId) {
     return this.request.post(`/web/likes/${mediaId}/like/`)
   }
 

@@ -7,8 +7,12 @@ export default class Follow implements ActionInterface {
 
   run(transactionBundle: TransactionBundleInterface, client: Instagram) {
     return new Promise(resolve => {
-      console.log('Follow!!!!');
-      resolve();
+      client.follow(transactionBundle.user.id)
+        .then(() => {
+          console.log('Follow!!!');
+
+          resolve()
+        });
     });
   }
 }

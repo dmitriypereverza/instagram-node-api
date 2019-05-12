@@ -3,7 +3,8 @@ import Instagram from "../lib/instagram";
 import { ActionInterface } from "../actions/buildAction";
 
 export interface UserInterface {
-  id: string
+  id: string,
+  username: string,
 }
 export interface TransactionBundleInterface {
   user: UserInterface,
@@ -26,8 +27,10 @@ export default class DefaultActionMaker implements ActionMakerInterface {
 
     const transactionBundle = await this.buildTransactionBundle(user.id);
 
+    console.log(`Get user ${transactionBundle.user.username}`);
+
     for (const asyncAction of this.actions) {
-      await asyncAction.run(transactionBundle, this.config)
+      await asyncAction.run(transactionBundle, this.client)
     }
 
     return;

@@ -7,8 +7,11 @@ export default class LikeFirstPost implements ActionInterface {
 
   run(transactionBundle: TransactionBundleInterface, client: Instagram) {
     return new Promise(resolve => {
-      console.log('LikeFirstPost!!!!');
-      resolve();
+      client.like(transactionBundle.posts[0].id)
+        .then(() => {
+          console.log('LikeFirstPost!!!');
+          resolve()
+        });
     });
   }
 }
