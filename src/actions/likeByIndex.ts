@@ -3,7 +3,7 @@ import Instagram from "../lib/instagram";
 import { TransactionBundleInterface } from "../actionMakers/DefaultActionMaker";
 
 interface LikeByIndexInterface {
-  index: number
+  postNumber: number
 }
 
 export default class LikeByIndex implements ActionInterface {
@@ -15,7 +15,7 @@ export default class LikeByIndex implements ActionInterface {
 
   run(transactionBundle: TransactionBundleInterface, client: Instagram) {
     return new Promise(resolve => {
-      client.like(transactionBundle.posts[this.config.index - 1].id)
+      client.like(transactionBundle.posts[this.config.postNumber - 1].id)
         .then(() => {
           console.log('LikeByIndex!!!');
           resolve()

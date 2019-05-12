@@ -396,7 +396,7 @@ export default class Instagram {
     )
   }
 
-  async addComment({ mediaId, text, replyToCommentId }) {
+  async addComment(mediaId, text, replyToCommentId = null) {
     return this.request.post(`/web/comments/${mediaId}/add/`, {
       form: { comment_text: text, replied_to_comment_id: replyToCommentId }
     })
