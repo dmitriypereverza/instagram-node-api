@@ -23,7 +23,6 @@ export default class Scheduler implements SchedulerInterface {
   }
 
   start() {
-    console.log('Start scheduler!!!');
     this.performDelay();
   }
 
@@ -35,8 +34,6 @@ export default class Scheduler implements SchedulerInterface {
     const { from, to } = this.config.delayAction;
     const delay = from + Math.round(Math.random() * (to - from));
 
-    console.log(delay);
     this.expirationTime = time() + delay;
-    console.log(this.expirationTime);
   }
 }

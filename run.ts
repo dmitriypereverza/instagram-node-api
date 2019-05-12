@@ -8,7 +8,7 @@ const client = new Instagram({ username, password, cookieStorePath: './store/coo
 
 (async () => {
 
-  if (!client.isLogined()) {
+  if (! await client.isLogined()) {
     console.log(`Login ${username}...`);
     await client.login();
     console.info('Login success.');

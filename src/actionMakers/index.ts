@@ -1,4 +1,5 @@
 import DefaultActionMaker from "./defaultActionMaker";
+import buildActions from "../actions/buildAction";
 
 export interface ActionMakerInterface {
   runActions: (user: any) => void
@@ -6,20 +7,11 @@ export interface ActionMakerInterface {
 
 export interface ActionMakerConfig {
   items: any[],
-  likes: {
-    needLike: boolean,
-    firstLike: boolean,
-    count: number,
-    range: number
-  },
-  follow: {
-    needFollow: boolean
-  },
-  comment: {
-    needComment: boolean
-  }
 }
 
 export default function makeActionMaker(config: ActionMakerConfig, client) {
-  return new DefaultActionMaker(config, client);
+
+  const actions = config.items.map(action => buildActions(action));
+
+  return new DefaultActionMaker(config, actions, client);
 };

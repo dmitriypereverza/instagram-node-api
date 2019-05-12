@@ -114,7 +114,7 @@ export default class Instagram {
 
   async isLogined() {
     try {
-      this.getProfile();
+      await this.getProfile();
       return true;
     } catch (e) {
       return false;
@@ -189,7 +189,7 @@ export default class Instagram {
     }).then(data => data.data.reels_media)
   }
 
-  async getUserIdPhotos({ id = '', first = 12, after = '' } = {}) {
+  async getUserIdPhotos(id = '', first = 12, after = '') {
     return this.request('/graphql/query/', {
       qs: {
         query_hash: '6305d415e36c0a5f0abb6daba312f2dd',
@@ -217,7 +217,7 @@ export default class Instagram {
 
   async getPhotosByUsername({ username, first, after }) {
     const user = await this.getUserByUsername({ username });
-    return this.getUserIdPhotos({ id: user.id, first, after })
+    return this.getUserIdPhotos(user.id, first, after)
   }
 
   async getStoryItemsByUsername({ username }) {

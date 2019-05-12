@@ -28,8 +28,7 @@ export default class TagsSource implements UserSourceInterface {
       console.log('Тег не найден');
       return;
     }
-    const mediaPost = await this.client.getMediaByShortcode(tag.shortcode);
-    return mediaPost.owner;
+    return tag.owner;
   };
 
   private async getNextTag() {
