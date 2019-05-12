@@ -1,5 +1,5 @@
 import Instagram from "../lib/instagram";
-import LikeFirstPost from "./likeFirstPost";
+import LikeByIndex from "./likeByIndex";
 import Wait from "./wait";
 import LikesRange from "./likesRange";
 import Follow from "./follow";
@@ -12,8 +12,8 @@ export interface ActionInterface {
 export default function buildActions ([ code, params ]): ActionInterface {
 
   switch (code) {
-    case "likeFirstPost":
-      return new LikeFirstPost(params);
+    case "likeByIndex":
+      return new LikeByIndex(params);
     case "wait":
       return new Wait(params);
     case "waitRange":

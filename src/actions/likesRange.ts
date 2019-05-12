@@ -18,7 +18,7 @@ export default class LikesRange implements ActionInterface {
     return new Promise(async resolve => {
       console.log('LikesRange!!!!');
 
-      const rangeList = this.getRangeList(this.config.from, this.config.to);
+      const rangeList = this.getRangeList(this.config.from - 1, this.config.to - 1);
 
       for (let i = 0; i < this.config.count; i++) {
         const randomElementNumber = Math.round(Math.random() * rangeList.length);
