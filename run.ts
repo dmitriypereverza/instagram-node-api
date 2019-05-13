@@ -6,11 +6,9 @@ require('./src/index');
 
 const { username, password } = process.env;
 const client = new Instagram({ username, password, cookieStorePath: './store/cookies.json' });
-const instagramClient = makeHummableRequestProxy(client) as Instagram;
-
+const instagramClient = makeHummableRequestProxy(client, 2) as Instagram;
 
 (async () => {
-
   if (! await instagramClient.isLogined()) {
     console.log(`Login ${username}...`);
     await instagramClient.login();
