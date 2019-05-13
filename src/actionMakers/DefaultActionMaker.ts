@@ -23,8 +23,6 @@ export default class DefaultActionMaker implements ActionMakerInterface {
   }
 
   async runActions(user: UserInterface) {
-    console.log('Action Maker', user.id);
-
     const transactionBundle = await this.buildTransactionBundle(user.id);
 
     console.log(`Get user ${transactionBundle.user.username}`);
