@@ -13,8 +13,8 @@ export interface TransactionBundleInterface {
 
 export default class DefaultActionMaker implements ActionMakerInterface {
   private config;
-  private actions: ActionInterface[];
-  private client: Instagram;
+  private readonly actions: ActionInterface[];
+  private readonly client: Instagram;
 
   constructor(config: ActionMakerConfig, actions: ActionInterface[], client) {
     this.actions = actions;

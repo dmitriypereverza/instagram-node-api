@@ -13,7 +13,6 @@ const baseUrl = 'https://www.instagram.com';
 
 import FileCookieStore from "tough-cookie-filestore2";
 
-
 export default class Instagram {
   private credentials;
   private request;
