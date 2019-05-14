@@ -33,7 +33,6 @@ export default class GeoSource implements UserSourceInterface {
 
   private async takeNewGeoFeed () {
     if (!this.geoList.length) {
-
       if (this.config.isCircle) {
         this.geoList = this.originalGeoList.slice();
       } else {
@@ -41,9 +40,7 @@ export default class GeoSource implements UserSourceInterface {
       }
     }
     const geo = this.geoList.shift();
-
     let geos = await this.client.getMediaFeedByLocation(geo);
-
     if (this.config.getPerOnce) {
       geos = geos.slice(0, this.config.getPerOnce);
     }

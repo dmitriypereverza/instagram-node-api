@@ -33,7 +33,6 @@ export default class FollowersSource implements UserSourceInterface {
 
   private async takeNewFollowers () {
     if (!this.userList.length) {
-
       if (this.config.isCircle) {
         this.userList = this.originalUserList.slice();
       } else {
@@ -42,13 +41,7 @@ export default class FollowersSource implements UserSourceInterface {
     }
     let user = this.userList.shift();
     user = await this.client.getUserByUsername(user);
-
-    console.log(user);
-
     let followers = await this.client.getFollowers(user.id, this.config.getPerOnce || 20);
-
-    console.log(followers[0]);
-
     if (this.config.getPerOnce) {
       followers = followers.slice(0, this.config.getPerOnce);
     }

@@ -3,6 +3,7 @@ import TagsSource from "./TagsSource";
 import ListSource from "./ListSource";
 import GeoSource from "./GeoSource";
 import FollowersSource from "./FollowersSource";
+import FilteredUserSource from "./filters";
 
 export interface UserSourceInterface {
   getNext: () => any
@@ -11,6 +12,7 @@ export interface UserSourceInterface {
 export interface UserSourceConfig {
   type: string,
   source: any,
+  filters: any[],
 }
 
 export interface UserSourceByTypeConfig {
@@ -22,7 +24,12 @@ export interface UserSourceByTypeConfig {
 
 export default function makeUserSource(config: UserSourceConfig, client): UserSourceInterface {
   const dataForUserSource = getSourceByType(config.source);
+  const userSource = buildUserSource(config, dataForUserSource, client);
 
+  return new FilteredUserSource(userSource, config.filters);
+};
+
+function buildUserSource (config, dataForUserSource, client) {
   switch (config.type) {
     case "list":
       return new ListSource(config.source, dataForUserSource, client);
@@ -35,7 +42,7 @@ export default function makeUserSource(config: UserSourceConfig, client): UserSo
     default:
       throw new Error('Передан неизветный тип пользовательского источника');
   }
-};
+}
 
 function getSourceByType (config) {
   switch (config.type) {

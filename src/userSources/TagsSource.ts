@@ -33,7 +33,6 @@ export default class TagsSource implements UserSourceInterface {
 
   private async takeNewTagsFeed () {
     if (!this.tagList.length) {
-
       if (this.config.isCircle) {
         this.tagList = this.originalTagList.slice();
       } else {
@@ -41,9 +40,7 @@ export default class TagsSource implements UserSourceInterface {
       }
     }
     const tag = this.tagList.shift();
-
-    let { edge_hashtag_to_media: { edges: tags } } = await this.client.getMediaFeedByHashtag(tag);
-    tags = tags.map(tag => tag.node);
+    let tags = await this.client.getMediaFeedByHashtag(tag);
 
     if (this.config.getPerOnce) {
       tags = tags.slice(0, this.config.getPerOnce);
