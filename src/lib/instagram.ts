@@ -373,8 +373,8 @@ export default class Instagram {
 
   async getMediaFeedByLocation(locationId) {
     return this.request(`/explore/locations/${locationId}/?__a=1`).then(
-      data => data.graphql.location
-    )
+      data => data.graphql.location.edge_location_to_media.edges
+    ).then(data => data.map(geo => geo.node))
   }
 
   async getMediaFeedByHashtag(hashtag) {

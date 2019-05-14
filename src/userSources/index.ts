@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import TagsSource from "./TagsSource";
 import ListSource from "./ListSource";
+import GeoSource from "./GeoSource";
 
 export interface UserSourceInterface {
   getNext: () => any
@@ -27,7 +28,7 @@ export default function makeUserSource(config: UserSourceConfig, client): UserSo
     case "hashTag":
       return new TagsSource(config.source, dataForUserSource, client);
     case "geo":
-      return {} as UserSourceInterface;
+      return new GeoSource(config.source, dataForUserSource, client);
     case "file":
       return {} as UserSourceInterface;
     default:
