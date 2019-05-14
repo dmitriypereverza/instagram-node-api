@@ -268,26 +268,23 @@ export default class Instagram {
       }
     })
       .then(data => data.data.user[fieldName])
-      .then(({ count, page_info, edges }) => ({
-        count,
-        page_info,
-        data: edges.map(edge => edge.node)
-      }))
+      .then(({ edges }) => edges.map(edge => edge.node))
   }
 
-  async getFollowers({ userId, first = 20, after }) {
+  async getFollowers(userId, first = 24) {
     return this._getFollowData({
       fieldName: 'edge_followed_by',
-      queryHash: '37479f2b8209594dde7facb0d904896a',
+      queryHash: '56066f031e6239f35a904ac20c9f37d9',
       variables: {
         id: userId,
         first,
-        after
+        include_reel: true,
+        fetch_mutual: true
       }
     })
   }
 
-  async getFollowings({ userId, first = 20, after }) {
+  async getFollowings(userId, first = 20, after = 0) {
     return this._getFollowData({
       fieldName: 'edge_follow',
       queryHash: '58712303d941c6855d4e888c5f0cd22f',

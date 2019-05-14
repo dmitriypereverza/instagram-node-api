@@ -2,6 +2,7 @@ import * as fs from "fs";
 import TagsSource from "./TagsSource";
 import ListSource from "./ListSource";
 import GeoSource from "./GeoSource";
+import FollowersSource from "./FollowersSource";
 
 export interface UserSourceInterface {
   getNext: () => any
@@ -29,8 +30,8 @@ export default function makeUserSource(config: UserSourceConfig, client): UserSo
       return new TagsSource(config.source, dataForUserSource, client);
     case "geo":
       return new GeoSource(config.source, dataForUserSource, client);
-    case "file":
-      return {} as UserSourceInterface;
+    case "followers":
+      return new FollowersSource(config.source, dataForUserSource, client);
     default:
       throw new Error('Передан неизветный тип пользовательского источника');
   }
