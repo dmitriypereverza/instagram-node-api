@@ -21,7 +21,8 @@ export default class FollowersSource implements UserSourceInterface {
     if (!user) {
       return;
     }
-    return user;
+
+    return await this.client.getUserByUsername(user.username);
   };
 
   private async getNextUser() {

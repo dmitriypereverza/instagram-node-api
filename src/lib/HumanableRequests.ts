@@ -1,6 +1,5 @@
 
 const delayedMethods: string[] = [
-  'getProfile',
   'follow',
   'like',
   'getUserByUsername',

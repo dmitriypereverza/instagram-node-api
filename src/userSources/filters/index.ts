@@ -22,10 +22,6 @@ export default class FilteredUserSource implements UserSourceInterface {
   }
 
   private isValid (user: any) {
-
-
-
-    console.log('IsValid???', user);
     for (const filter of this.filters) {
       if (filter.length === 2 && !this.getTwoArgsFilterResult(user, filter)) {
         console.log(user.username, filter);
@@ -36,7 +32,6 @@ export default class FilteredUserSource implements UserSourceInterface {
         return false;
       }
     }
-    console.log('Seems like true.');
 
     return true;
   }
