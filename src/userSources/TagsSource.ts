@@ -3,20 +3,20 @@ import Instagram from "../lib/instagram";
 
 export default class TagsSource implements UserSourceInterface {
   private readonly config: UserSourceByTypeConfig;
-  private client: Instagram;
   private tagList: any[] = [];
   private readonly originalTagList: any[] = [];
   private instagramTagList: any[] = [];
+  private client: Instagram;
 
-  constructor(config: UserSourceByTypeConfig, tagList: string[], client: Instagram) {
+  constructor(config: UserSourceByTypeConfig, tagList: string[]) {
     this.originalTagList = tagList;
     this.config = config;
-    this.client = client;
 
     this.tagList = this.originalTagList.slice();
   }
 
-  async getNext() {
+  async getNext(client: Instagram) {
+    this.client = client;
     const tag = await this.getNextTag() as any;
     if (!tag) {
       return;

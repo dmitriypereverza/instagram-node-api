@@ -8,15 +8,16 @@ export default class GeoSource implements UserSourceInterface {
   private readonly originalGeoList: any[] = [];
   private instagramGeoList: any[] = [];
 
-  constructor(config: UserSourceByTypeConfig, tagList: string[], client: Instagram) {
+  constructor(config: UserSourceByTypeConfig, tagList: string[]) {
     this.originalGeoList = tagList;
     this.config = config;
-    this.client = client;
 
     this.geoList = this.originalGeoList.slice();
   }
 
-  async getNext() {
+  async getNext(client: Instagram) {
+    this.client = client;
+
     const tag = await this.getNextTag() as any;
     if (!tag) {
       return;

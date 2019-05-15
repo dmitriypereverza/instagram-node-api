@@ -8,15 +8,15 @@ export default class FollowersSource implements UserSourceInterface {
   private readonly originalUserList: any[] = [];
   private instagramUserList: any[] = [];
 
-  constructor(config: UserSourceByTypeConfig, tagList: string[], client: Instagram) {
+  constructor(config: UserSourceByTypeConfig, tagList: string[]) {
     this.originalUserList = tagList;
     this.config = config;
-    this.client = client;
 
     this.userList = this.originalUserList.slice();
   }
 
-  async getNext() {
+  async getNext(client: Instagram) {
+    this.client = client;
     const user = await this.getNextUser() as any;
     if (!user) {
       return;

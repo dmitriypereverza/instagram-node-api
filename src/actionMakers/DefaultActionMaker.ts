@@ -12,17 +12,15 @@ export interface TransactionBundleInterface {
 }
 
 export default class DefaultActionMaker implements ActionMakerInterface {
-  private config;
   private readonly actions: ActionInterface[];
-  private readonly client: Instagram;
+  private client: Instagram;
 
-  constructor(config: ActionMakerConfig, actions: ActionInterface[], client) {
+  constructor(config: ActionMakerConfig, actions: ActionInterface[]) {
     this.actions = actions;
-    this.config = config;
-    this.client = client;
   }
 
-  async runActions(user: UserInterface) {
+  async runActions(user: UserInterface, client: Instagram) {
+    this.client = client;
     const transactionBundle = await this.buildTransactionBundle(user.id);
     console.log(`Get user ${transactionBundle.user.username}`);
 

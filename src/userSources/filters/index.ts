@@ -1,4 +1,5 @@
 import { UserSourceInterface } from "../index";
+import Instagram from "../../lib/instagram";
 
 export default class FilteredUserSource implements UserSourceInterface {
   private userSource: UserSourceInterface;
@@ -9,14 +10,14 @@ export default class FilteredUserSource implements UserSourceInterface {
     this.filters = filters;
   }
 
-  async getNext() {
-    let user = await this.userSource.getNext();
+  async getNext(client: Instagram) {
+    let user = await this.userSource.getNext(client);
     if (!user) {
       return;
     }
 
     if (!this.isValid(user)) {
-      user = this.getNext();
+      user = await this.getNext(client);
     }
     return user;
   }

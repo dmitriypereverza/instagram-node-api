@@ -4,9 +4,10 @@ import ListSource from "./ListSource";
 import GeoSource from "./GeoSource";
 import FollowersSource from "./FollowersSource";
 import FilteredUserSource from "./filters";
+import Instagram from "../lib/instagram";
 
 export interface UserSourceInterface {
-  getNext: () => any
+  getNext: (instagramClient?: Instagram) => any
 }
 
 export interface UserSourceConfig {
@@ -22,23 +23,23 @@ export interface UserSourceByTypeConfig {
   getPerOnce: number,
 }
 
-export default function makeUserSource(config: UserSourceConfig, client): UserSourceInterface {
+export default function makeUserSource(config: UserSourceConfig): UserSourceInterface {
   const dataForUserSource = getSourceByType(config.source);
-  const userSource = buildUserSource(config, dataForUserSource, client);
+  const userSource = buildUserSource(config, dataForUserSource);
 
   return new FilteredUserSource(userSource, config.filters);
 };
 
-function buildUserSource (config, dataForUserSource, client) {
+function buildUserSource (config, dataForUserSource) {
   switch (config.type) {
     case "list":
-      return new ListSource(config.source, dataForUserSource, client);
+      return new ListSource(config.source, dataForUserSource);
     case "hashTag":
-      return new TagsSource(config.source, dataForUserSource, client);
+      return new TagsSource(config.source, dataForUserSource);
     case "geo":
-      return new GeoSource(config.source, dataForUserSource, client);
+      return new GeoSource(config.source, dataForUserSource);
     case "followers":
-      return new FollowersSource(config.source, dataForUserSource, client);
+      return new FollowersSource(config.source, dataForUserSource);
     default:
       throw new Error('Передан неизветный тип пользовательского источника');
   }

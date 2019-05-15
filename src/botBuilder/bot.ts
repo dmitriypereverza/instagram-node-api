@@ -2,6 +2,7 @@ import EventEmitter from 'events';
 import { UserSourceInterface } from "../userSources";
 import { ActionMakerInterface } from "../actionMakers";
 import { SchedulerInterface } from "../scheduler";
+import Instagram from "../lib/instagram";
 
 interface BotInterface {
   start: () => void,
@@ -14,20 +15,33 @@ class Bot extends EventEmitter implements BotInterface {
   private scheduler: SchedulerInterface;
 
   private timer;
+  private instagramClient: Instagram;
 
-  constructor(scheduler: SchedulerInterface, userSource: UserSourceInterface, actionMaker: ActionMakerInterface) {
+  constructor(
+    client: Instagram,
+    scheduler: SchedulerInterface,
+    userSource: UserSourceInterface,
+    actionMaker: ActionMakerInterface
+  ) {
     super();
+    this.instagramClient = client;
     this.scheduler = scheduler;
     this.userSource = userSource;
     this.actionMaker = actionMaker;
   }
 
-  start() {
-    this.runIteration();
+  async start() {
+    if (! await this.instagramClient.isLogined()) {
+      console.log(`Login ...`);
+      await this.instagramClient.login();
+      console.info('Login success.');
+    }
+
+    await this.runIteration();
     this.scheduler.start();
-    this.timer = setInterval(() => {
+    this.timer = setInterval(async () => {
       if (this.scheduler.canExec()) {
-        this.runIteration();
+        await this.runIteration();
         this.scheduler.start();
       }
     }, 1000);
@@ -38,8 +52,8 @@ class Bot extends EventEmitter implements BotInterface {
   }
 
   private async runIteration() {
-    const user = await this.userSource.getNext();
-    this.actionMaker.runActions(user);
+    const user = await this.userSource.getNext(this.instagramClient);
+    this.actionMaker.runActions(user, this.instagramClient);
   }
 }
 

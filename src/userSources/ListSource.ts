@@ -3,20 +3,18 @@ import Instagram from "../lib/instagram";
 
 export default class ListSource implements UserSourceInterface {
   private readonly config: UserSourceByTypeConfig;
-  private client: Instagram;
   private readonly originalUserNameList: string[] = [];
   private userNameList: string[] = [];
   private cachedUserList: any[] = [];
 
-  constructor(config: UserSourceByTypeConfig, userList: string[], client: Instagram) {
+  constructor(config: UserSourceByTypeConfig, userList: string[]) {
     this.originalUserNameList = userList;
     this.config = config;
-    this.client = client;
 
     this.userNameList = this.originalUserNameList.slice();
   }
 
-  async getNext() {
+  async getNext(client: Instagram) {
     if (!this.userNameList.length) {
       if (this.config.isCircle) {
         this.userNameList = this.originalUserNameList.slice();
@@ -29,7 +27,7 @@ export default class ListSource implements UserSourceInterface {
 
     let user = this.cachedUserList[userName];
     if (!user) {
-      user = await this.client.getUserByUsername(userName);
+      user = await client.getUserByUsername(userName);
       this.cachedUserList[userName] = user;
     }
 

@@ -1,4 +1,5 @@
 import fs from "fs";
+import * as path from "path";
 import { ActionInterface } from "./buildAction";
 import Instagram from "../lib/instagram";
 import { TransactionBundleInterface } from "../actionMakers/DefaultActionMaker";
@@ -15,8 +16,9 @@ export default class CommentTemplate implements ActionInterface {
   constructor(config: CommentTemplateConfigInterface) {
     this.config = config;
 
-    const templatesFilePath = process.env.storePath + this.config.filePath;
+    const templatesFilePath = path.resolve('./store/' + this.config.filePath);
 
+    console.log(templatesFilePath);
     if (!fs.existsSync(templatesFilePath)) {
       throw new Error(`Файл ${this.config.filePath} не существует.`);
     }
