@@ -1,13 +1,15 @@
 import { UserSourceByTypeConfig, UserSourceInterface } from "./index";
 import Instagram from "../lib/instagram";
+import { EventEmitter2 } from "eventemitter2";
 
-export default class ListSource implements UserSourceInterface {
+export default class ListSource extends EventEmitter2 implements UserSourceInterface {
   private readonly config: UserSourceByTypeConfig;
   private readonly originalUserNameList: string[] = [];
   private userNameList: string[] = [];
   private cachedUserList: any[] = [];
 
   constructor(config: UserSourceByTypeConfig, userList: string[]) {
+    super();
     this.originalUserNameList = userList;
     this.config = config;
 
@@ -31,6 +33,7 @@ export default class ListSource implements UserSourceInterface {
       this.cachedUserList[userName] = user;
     }
 
+    this.emit('log', `Получили подписчика из списка ${user.username}`);
     return user;
   }
 }

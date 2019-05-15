@@ -1,7 +1,8 @@
 import { UserSourceByTypeConfig, UserSourceInterface } from "./index";
 import Instagram from "../lib/instagram";
+import { EventEmitter2 } from "eventemitter2";
 
-export default class GeoSource implements UserSourceInterface {
+export default class GeoSource extends EventEmitter2 implements UserSourceInterface {
   private readonly config: UserSourceByTypeConfig;
   private client: Instagram;
   private geoList: any[] = [];
@@ -9,6 +10,7 @@ export default class GeoSource implements UserSourceInterface {
   private instagramGeoList: any[] = [];
 
   constructor(config: UserSourceByTypeConfig, tagList: string[]) {
+    super();
     this.originalGeoList = tagList;
     this.config = config;
 
@@ -22,7 +24,10 @@ export default class GeoSource implements UserSourceInterface {
     if (!tag) {
       return;
     }
-    return tag.owner;
+
+    const user = await this.client.getUserByUsername(tag.owner.username);
+    this.emit('log', `Получили подписчика по геопозиции ${user.username}`);
+    return user;
   };
 
   private async getNextTag() {

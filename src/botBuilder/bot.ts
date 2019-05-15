@@ -15,7 +15,7 @@ class Bot extends EventEmitter implements BotInterface {
   private scheduler: SchedulerInterface;
 
   private timer;
-  private instagramClient: Instagram;
+  private readonly instagramClient: Instagram;
 
   constructor(
     client: Instagram,
@@ -28,6 +28,17 @@ class Bot extends EventEmitter implements BotInterface {
     this.scheduler = scheduler;
     this.userSource = userSource;
     this.actionMaker = actionMaker;
+
+    this.initHandlers();
+  }
+
+  private initHandlers () {
+    this.scheduler.on('log', text => {
+      console.log(text);
+    });
+    this.userSource.on('log', text => {
+      console.log(text);
+    });
   }
 
   async start() {

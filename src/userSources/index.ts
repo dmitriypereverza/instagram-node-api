@@ -7,7 +7,9 @@ import FilteredUserSource from "./filters";
 import Instagram from "../lib/instagram";
 
 export interface UserSourceInterface {
-  getNext: (instagramClient?: Instagram) => any
+  getNext: (instagramClient?: Instagram) => any,
+  on: (type, callback) => void,
+  onAny?: (callback) => void,
 }
 
 export interface UserSourceConfig {

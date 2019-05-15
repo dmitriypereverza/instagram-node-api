@@ -1,7 +1,8 @@
 import { UserSourceByTypeConfig, UserSourceInterface } from "./index";
 import Instagram from "../lib/instagram";
+import { EventEmitter2 } from "eventemitter2";
 
-export default class TagsSource implements UserSourceInterface {
+export default class TagsSource extends EventEmitter2 implements UserSourceInterface {
   private readonly config: UserSourceByTypeConfig;
   private tagList: any[] = [];
   private readonly originalTagList: any[] = [];
@@ -9,6 +10,7 @@ export default class TagsSource implements UserSourceInterface {
   private client: Instagram;
 
   constructor(config: UserSourceByTypeConfig, tagList: string[]) {
+    super();
     this.originalTagList = tagList;
     this.config = config;
 
@@ -21,7 +23,10 @@ export default class TagsSource implements UserSourceInterface {
     if (!tag) {
       return;
     }
-    return tag.owner;
+
+    const user = await this.client.getUserByUsername(tag.owner.username);
+    this.emit('log', `Получили подписчика по тегу ${user.username}`);
+    return user;
   };
 
   private async getNextTag() {
@@ -40,6 +45,9 @@ export default class TagsSource implements UserSourceInterface {
       }
     }
     const tag = this.tagList.shift();
+
+    this.emit('log', `Получаем пользователей по тегу ${tag}`);
+
     let tags = await this.client.getMediaFeedByHashtag(tag);
 
     if (this.config.getPerOnce) {

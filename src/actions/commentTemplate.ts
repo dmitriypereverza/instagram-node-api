@@ -11,7 +11,7 @@ interface CommentTemplateConfigInterface {
 
 export default class CommentTemplate implements ActionInterface {
   private config: CommentTemplateConfigInterface;
-  private templateList: string[] = [];
+  private readonly templateList: string[] = [];
 
   constructor(config: CommentTemplateConfigInterface) {
     this.config = config;

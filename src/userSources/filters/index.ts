@@ -1,13 +1,20 @@
 import { UserSourceInterface } from "../index";
 import Instagram from "../../lib/instagram";
+import { EventEmitter2 } from "eventemitter2";
 
-export default class FilteredUserSource implements UserSourceInterface {
+export default class FilteredUserSource extends EventEmitter2 implements UserSourceInterface {
   private userSource: UserSourceInterface;
   private readonly filters: any[];
 
   constructor(userSource: UserSourceInterface, filters) {
+    super();
     this.userSource = userSource;
     this.filters = filters;
+
+    const that = this;
+    this.userSource.onAny(function(event, value) {
+      that.emit(event, value);
+    });
   }
 
   async getNext(client: Instagram) {

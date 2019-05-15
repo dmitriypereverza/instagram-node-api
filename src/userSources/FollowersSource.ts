@@ -1,7 +1,8 @@
 import { UserSourceByTypeConfig, UserSourceInterface } from "./index";
 import Instagram from "../lib/instagram";
+import { EventEmitter2 } from "eventemitter2";
 
-export default class FollowersSource implements UserSourceInterface {
+export default class FollowersSource extends EventEmitter2 implements UserSourceInterface {
   private readonly config: UserSourceByTypeConfig;
   private client: Instagram;
   private userList: any[] = [];
@@ -9,6 +10,7 @@ export default class FollowersSource implements UserSourceInterface {
   private instagramUserList: any[] = [];
 
   constructor(config: UserSourceByTypeConfig, tagList: string[]) {
+    super();
     this.originalUserList = tagList;
     this.config = config;
 
@@ -22,7 +24,10 @@ export default class FollowersSource implements UserSourceInterface {
       return;
     }
 
-    return await this.client.getUserByUsername(user.username);
+    const follower = await this.client.getUserByUsername(user.username);
+
+    this.emit('log', `Получили подписчика ${follower.username}`);
+    return follower;
   };
 
   private async getNextUser() {
@@ -41,6 +46,8 @@ export default class FollowersSource implements UserSourceInterface {
       }
     }
     let user = this.userList.shift();
+    this.emit('log', `Получаем подписчиков пользователя ${user}`);
+
     user = await this.client.getUserByUsername(user);
     let followers = await this.client.getFollowers(user.id, this.config.getPerOnce || 20);
     if (this.config.getPerOnce) {

@@ -13,8 +13,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/eventemitter2": "^4.1.0",
     "crypto": "^1.0.1",
     "dotenv": "^8.0.0",
+    "eventemitter2": "^5.0.1",
     "fc": "^1.5.2",
     "fs": "0.0.1-security",
     "is-url": "^1.2.4",
