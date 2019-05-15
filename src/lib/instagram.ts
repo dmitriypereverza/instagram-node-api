@@ -29,6 +29,9 @@ export default class Instagram {
 
     let cookieStore = {};
     if (cookieStorePath) {
+      if (!fs.existsSync(cookieStorePath)) {
+        fs.writeFileSync(cookieStorePath, '', { flag: 'w' });
+      }
       try {
         cookieStore = new FileCookieStore(cookieStorePath);
       } catch (e) {
@@ -116,6 +119,7 @@ export default class Instagram {
       await this.getProfile();
       return true;
     } catch (e) {
+      console.log(e);
       return false;
     }
   }
