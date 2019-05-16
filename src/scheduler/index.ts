@@ -20,6 +20,8 @@ function time() {
 export default class Scheduler extends EventEmitter2 implements SchedulerInterface {
   private config: ScheduleConfig;
   private expirationTime: number;
+  private timer: NodeJS.Timeout;
+  private timeExpired = true;
 
   constructor(config: ScheduleConfig) {
     super();
@@ -28,10 +30,18 @@ export default class Scheduler extends EventEmitter2 implements SchedulerInterfa
 
   start() {
     this.expirationTime = this.performDelay();
+
+    this.timer = setInterval(() => {
+      this.tick();
+    }, 1000);
+  }
+
+  stop() {
+    clearInterval(this.timer);
   }
 
   canExec() {
-    return this.expirationTime <= time();
+    return this.timeExpired;
   }
 
   performDelay() {
@@ -39,7 +49,16 @@ export default class Scheduler extends EventEmitter2 implements SchedulerInterfa
     const delay = from + Math.round(Math.random() * (to - from));
 
     this.emit('log', `Ждем ${delay} секунд.`);
-
     return time() + delay;
+  }
+
+  private tick () {
+    this.timeExpired = this.expirationTime <= time();
+    this.emit('log', `Ждем ${Math.round(this.expirationTime - time())} секунд.`);
+
+    if (this.timeExpired) {
+      this.emit('log', `Таймер истек.`);
+      this.stop();
+    }
   }
 }

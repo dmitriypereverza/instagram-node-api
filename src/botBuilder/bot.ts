@@ -1,15 +1,19 @@
-import EventEmitter from 'events';
+import { EventEmitter2 } from "eventemitter2";
 import { UserSourceInterface } from "../userSources";
 import { ActionMakerInterface } from "../actionMakers";
 import { SchedulerInterface } from "../scheduler";
 import Instagram from "../lib/instagram";
 
-interface BotInterface {
-  start: () => void,
-  stop: () => void,
+interface StateInterface {
+  isTransactionExecute: boolean,
 }
 
-class Bot extends EventEmitter implements BotInterface {
+interface BotInterface {
+  start: () => void,
+  stop: () => void
+}
+
+class Bot extends EventEmitter2 implements BotInterface {
   private userSource: UserSourceInterface;
   private actionMaker: ActionMakerInterface;
   private scheduler: SchedulerInterface;
@@ -17,13 +21,17 @@ class Bot extends EventEmitter implements BotInterface {
   private timer;
   private readonly instagramClient: Instagram;
 
+  private state: StateInterface = {
+    isTransactionExecute: false
+  };
+
   constructor(
     client: Instagram,
     scheduler: SchedulerInterface,
     userSource: UserSourceInterface,
     actionMaker: ActionMakerInterface
   ) {
-    super();
+    super({ wildcard: true });
     this.instagramClient = client;
     this.scheduler = scheduler;
     this.userSource = userSource;
@@ -34,27 +42,25 @@ class Bot extends EventEmitter implements BotInterface {
 
   private initHandlers () {
     this.scheduler.on('log', text => {
-      console.log(text);
+      this.emit('log.scheduler', text);
     });
     this.userSource.on('log', text => {
-      console.log(text);
+      this.emit('log.userSource', text);
+    });
+    this.actionMaker.on('log', text => {
+      this.emit('log.actionMaker', text);
     });
   }
 
   async start() {
     if (! await this.instagramClient.isLogined()) {
-      console.log(`Login ...`);
+      this.emit('log.system', 'Входим в систему.');
       await this.instagramClient.login();
-      console.info('Login success.');
-    }
+      this.emit('log.system', 'Успешный вход.');
+    } else this.emit('log.system', 'Вход не требуется.');
 
-    await this.runIteration();
-    this.scheduler.start();
-    this.timer = setInterval(async () => {
-      if (this.scheduler.canExec()) {
-        await this.runIteration();
-        this.scheduler.start();
-      }
+    this.timer = setInterval(() => {
+      this.tick();
     }, 1000);
   }
 
@@ -63,8 +69,31 @@ class Bot extends EventEmitter implements BotInterface {
   }
 
   private async runIteration() {
-    const user = await this.userSource.getNext(this.instagramClient);
-    this.actionMaker.runActions(user, this.instagramClient);
+    this.state.isTransactionExecute = true;
+    try {
+      const user = await this.userSource.getNext(this.instagramClient);
+      await this.actionMaker.runActions(user, this.instagramClient);
+
+    } catch (e) {
+      console.log('ERROR', e);
+      if (e.statusCode.toString().charAt(0) === 4) {
+        this.emit('error.ban', e.statusMessage);
+      }
+    }
+    this.state.isTransactionExecute = false;
+  }
+
+  private tick () {
+    if (!this.scheduler.canExec()) {
+      return;
+    }
+
+    if (this.state.isTransactionExecute) {
+      this.emit('log.system', 'Задача еще выполняется.');
+      return;
+    }
+    this.scheduler.start();
+    this.runIteration();
   }
 }
 

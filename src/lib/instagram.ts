@@ -119,7 +119,6 @@ export default class Instagram {
       await this.getProfile();
       return true;
     } catch (e) {
-      console.log(e);
       return false;
     }
   }
@@ -202,7 +201,8 @@ export default class Instagram {
           after
         })
       }
-    }).then(data => data.data)
+    }).then(data => data.data.user.edge_owner_to_timeline_media.edges)
+      .then(data => data.map(post => post.node))
   }
 
   async getPhotosByHashtag({ hashtag = '', first = 12, after = '' } = {}) {

@@ -47,7 +47,6 @@ export default class TagsSource extends EventEmitter2 implements UserSourceInter
     const tag = this.tagList.shift();
 
     this.emit('log', `Получаем пользователей по тегу ${tag}`);
-
     let tags = await this.client.getMediaFeedByHashtag(tag);
 
     if (this.config.getPerOnce) {

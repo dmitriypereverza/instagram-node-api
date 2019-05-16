@@ -2,7 +2,8 @@ import DefaultActionMaker from "./defaultActionMaker";
 import buildActions from "../actions/buildAction";
 
 export interface ActionMakerInterface {
-  runActions: (user: any, config) => void
+  runActions: (user: any, config) => void,
+  on: (type, callback) => void
 }
 
 export interface ActionMakerConfig {

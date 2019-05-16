@@ -32,11 +32,11 @@ export default class FilteredUserSource extends EventEmitter2 implements UserSou
   private isValid (user: any) {
     for (const filter of this.filters) {
       if (filter.length === 2 && !this.getTwoArgsFilterResult(user, filter)) {
-        console.log(user.username, filter);
+        this.emit('log', `Пользователь ${user.username} не прошел проверку ${filter}`);
         return false;
       }
       if (filter.length === 3 && !this.getThreeArgsFilterResult(user, filter)) {
-        console.log(user.username, filter);
+        this.emit('log', `Пользователь ${user.username} не прошел проверку ${filter}`);
         return false;
       }
     }
@@ -74,7 +74,7 @@ export default class FilteredUserSource extends EventEmitter2 implements UserSou
     }
     switch (propKey) {
       case 'isBusinessAccount': return user.is_business_account;
-      case 'isMyFollower': return user.followed_by_viewer;
+      case 'isMyFollower': return user.follows_viewer;
       case 'followers': return user.edge_followed_by.count;
       case 'followings': return user.edge_follow.count;
       case 'media': return user.edge_owner_to_timeline_media.count;
