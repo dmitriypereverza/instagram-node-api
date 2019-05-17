@@ -85,11 +85,13 @@ class Bot extends EventEmitter2 implements BotInterface {
 
   private tick () {
     if (!this.scheduler.canExec()) {
+      if (!this.state.isTransactionExecute) {
+        this.emit('log.system', `Ждем ${this.scheduler.getTimeRemains()} секунд.`);
+      }
       return;
     }
 
     if (this.state.isTransactionExecute) {
-      this.emit('log.system', 'Задача еще выполняется.');
       return;
     }
     this.scheduler.start();

@@ -3,17 +3,19 @@ import * as path from "path";
 import { ActionInterface } from "./buildAction";
 import Instagram from "../lib/instagram";
 import { TransactionBundleInterface } from "../actionMakers/DefaultActionMaker";
+import { EventEmitter2 } from "eventemitter2";
 
 interface CommentTemplateConfigInterface {
   filePath: string,
   postNumber: number,
 }
 
-export default class CommentTemplate implements ActionInterface {
+export default class CommentTemplate extends EventEmitter2 implements ActionInterface {
   private config: CommentTemplateConfigInterface;
   private readonly templateList: string[] = [];
 
   constructor(config: CommentTemplateConfigInterface) {
+    super();
     this.config = config;
 
     const templatesFilePath = path.resolve('./store/' + this.config.filePath);
@@ -25,10 +27,7 @@ export default class CommentTemplate implements ActionInterface {
 
   run(transactionBundle: TransactionBundleInterface, client: Instagram) {
     return new Promise(async resolve => {
-      console.log("Add comment by template!!!");
 
-      console.log(transactionBundle.user);
-      
       let template = this.getRandomOfList(this.templateList);
       template = template.replace(/\|/g, '~~');
 
@@ -42,9 +41,9 @@ export default class CommentTemplate implements ActionInterface {
       });
 
       const post = transactionBundle.posts[this.config.postNumber - 1];
-      // await client.addComment(post.id, resultComment);
+      await client.addComment(post.id, resultComment);
+      this.emit('log', `Написан сгенерированный комментарий [${resultComment}]`);
 
-      console.log(resultComment);
       resolve();
     });
   }

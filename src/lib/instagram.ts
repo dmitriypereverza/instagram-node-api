@@ -379,7 +379,7 @@ export default class Instagram {
   }
 
   async getMediaFeedByHashtag(hashtag) {
-    return this.request(`/explore/tags/${hashtag}/?__a=1`)
+    return this.request(`/explore/tags/${encodeURIComponent(hashtag)}/?__a=1`)
       .then(data => data.graphql.hashtag.edge_hashtag_to_media.edges)
       .then(data => data.map(tag => tag.node))
   }
@@ -435,6 +435,7 @@ export default class Instagram {
   }
 
   async like(mediaId) {
+    console.log('like', mediaId);
     return this.request.post(`/web/likes/${mediaId}/like/`)
   }
 

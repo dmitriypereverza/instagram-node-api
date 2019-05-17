@@ -19,7 +19,7 @@ export interface BotConfig {
 function botBuild(config: BotConfig): Bot {
   const { username, password } = config.account;
   const client = new Instagram({ username, password, cookieStorePath: './store/cookies.json' });
-  const instagramClient = makeHummableRequestProxy(client, 5) as Instagram;
+  const instagramClient = makeHummableRequestProxy(client, 9) as Instagram;
 
   const strategyConfig = config.strategy;
 

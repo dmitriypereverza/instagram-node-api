@@ -1,6 +1,7 @@
 import { ActionInterface } from "./buildAction";
 import Instagram from "../lib/instagram";
 import { TransactionBundleInterface } from "../actionMakers/DefaultActionMaker";
+import { EventEmitter2 } from "eventemitter2";
 
 interface LikesRangeConfigInterface {
   count: number,
@@ -8,25 +9,23 @@ interface LikesRangeConfigInterface {
   to: number
 }
 
-export default class LikesRange implements ActionInterface {
+export default class LikesRange extends EventEmitter2 implements ActionInterface {
   private config: LikesRangeConfigInterface;
 
   constructor(config: LikesRangeConfigInterface) {
-    this.config = config;}
+    super();
+    this.config = config;
+  }
 
   run(transactionBundle: TransactionBundleInterface, client: Instagram) {
     return new Promise(async resolve => {
-      console.log('LikesRange!!!!');
-
-      const rangeList = this.getRangeList(this.config.from - 1, this.config.to - 1);
+      const rangeList = this.getRangeList(this.config.from, this.config.to);
 
       for (let i = 0; i < this.config.count; i++) {
         const randomElementNumber = Math.round(Math.random() * rangeList.length);
-
-        await client.like(transactionBundle.posts[rangeList[randomElementNumber]].id);
-        console.log(`Like ${rangeList[randomElementNumber]}`);
-
-         delete rangeList[randomElementNumber]
+        this.emit('log', `Лайкнаем запись под номером [${rangeList[randomElementNumber]}]`);
+        await client.like(transactionBundle.posts[rangeList[randomElementNumber] - 1].id);
+        delete rangeList[randomElementNumber]
       }
 
       resolve();

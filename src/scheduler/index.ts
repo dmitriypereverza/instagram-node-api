@@ -3,6 +3,7 @@ import { EventEmitter2 } from "eventemitter2";
 export interface SchedulerInterface {
   start: () => void,
   canExec: () => boolean,
+  getTimeRemains: () => number,
   on: (type, callback) => void
 }
 
@@ -44,6 +45,10 @@ export default class Scheduler extends EventEmitter2 implements SchedulerInterfa
     return this.timeExpired;
   }
 
+  getTimeRemains () {
+    return Math.round(this.expirationTime - time());
+  }
+
   performDelay() {
     const { from, to } = this.config.delayAction;
     const delay = from + Math.round(Math.random() * (to - from));
@@ -54,7 +59,6 @@ export default class Scheduler extends EventEmitter2 implements SchedulerInterfa
 
   private tick () {
     this.timeExpired = this.expirationTime <= time();
-    this.emit('log', `Ждем ${Math.round(this.expirationTime - time())} секунд.`);
 
     if (this.timeExpired) {
       this.emit('log', `Таймер истек.`);

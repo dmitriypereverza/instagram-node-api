@@ -17,8 +17,14 @@ export default class DefaultActionMaker extends EventEmitter2 implements ActionM
   private client: Instagram;
 
   constructor(config: ActionMakerConfig, actions: ActionInterface[]) {
-    super();
+    super({ wildcard: true });
     this.actions = actions;
+
+    for (const asyncAction of this.actions) {
+      asyncAction.onAny((event, value) => {
+        this.emit(event, value);
+      });
+    }
   }
 
   async runActions(user: UserInterface, client: Instagram) {

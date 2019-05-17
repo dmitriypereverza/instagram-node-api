@@ -9,10 +9,10 @@ import CommentTemplate from "./commentTemplate";
 
 export interface ActionInterface {
   run: (user, client: Instagram) => void;
+  onAny: (callback) => void
 }
 
 export default function buildActions ([ code, params ]): ActionInterface {
-
   switch (code) {
     case "likeByIndex":
       return new LikeByIndex(params);
