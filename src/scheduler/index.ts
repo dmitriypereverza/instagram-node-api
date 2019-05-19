@@ -1,8 +1,10 @@
 import { EventEmitter2 } from "eventemitter2";
+import { time } from "../helpers";
 
 export interface SchedulerInterface {
   start: () => void,
   canExec: () => boolean,
+  wait: (time) => void,
   getTimeRemains: () => number,
   on: (type, callback) => void
 }
@@ -12,10 +14,6 @@ export interface ScheduleConfig {
     from: number,
     to: number
   }
-}
-
-function time() {
-  return (new Date()).getTime()/1000;
 }
 
 export default class Scheduler extends EventEmitter2 implements SchedulerInterface {
@@ -47,6 +45,12 @@ export default class Scheduler extends EventEmitter2 implements SchedulerInterfa
 
   getTimeRemains () {
     return Math.round(this.expirationTime - time());
+  }
+
+  wait(timeWait) {
+    this.expirationTime = time() + timeWait;
+    console.log('expirationTime', this.expirationTime);
+    this.timeExpired = false;
   }
 
   performDelay() {

@@ -17,12 +17,25 @@ export default class Comment extends EventEmitter2 implements ActionInterface {
   }
 
   run(transactionBundle: TransactionBundleInterface, client: Instagram) {
-    return new Promise(async resolve => {
-      const post = transactionBundle.posts[this.config.postNumber - 1];
-      await client.addComment(post.id, this.config.text);
-      this.emit('log', `Написан комментарий ${this.config.text}`);
+    return new Promise(async (resolve, reject) => {
+      const [ [ canComment] ] = await this.emitAsync('canComment');
+      if (!canComment) {
+        reject({
+          code: 'limitExpired',
+          by: 'comment',
+          message: 'Досигнут лимит комментариев.',
+        });
+      }
 
-      resolve();
+      const post = transactionBundle.posts[this.config.postNumber - 1];
+      try {
+        this.emit('log', `Пишем комментарий ${this.config.text}`);
+        await client.addComment(post.id, this.config.text);
+        this.emit('action.comment', post.id);
+        resolve();
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 

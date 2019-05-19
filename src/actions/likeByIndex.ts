@@ -16,10 +16,25 @@ export default class LikeByIndex extends EventEmitter2 implements ActionInterfac
   }
 
   run(transactionBundle: TransactionBundleInterface, client: Instagram) {
-    return new Promise(resolve => {
+    return new Promise(async (resolve, reject) => {
+      const [ [ canLike ] ] = await this.emitAsync('canLike');
+      if (!canLike) {
+        reject({
+          code: 'limitExpired',
+          by: 'like',
+          message: 'Досигнут лимит лайков.',
+        });
+      }
+
       this.emit('log', `Лайкаем запись под номером [${this.config.postNumber}]`);
-      client.like(transactionBundle.posts[this.config.postNumber - 1].id)
-        .then(resolve);
+      try {
+        const mediaId = transactionBundle.posts[this.config.postNumber - 1].id;
+        await client.like(mediaId);
+        this.emit('action.like', mediaId);
+        resolve();
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 }

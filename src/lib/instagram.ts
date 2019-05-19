@@ -14,7 +14,7 @@ const baseUrl = 'https://www.instagram.com';
 import FileCookieStore from "tough-cookie-filestore2";
 
 export default class Instagram {
-  private credentials;
+  public credentials;
   private request;
   private _sharedData;
 
@@ -435,7 +435,6 @@ export default class Instagram {
   }
 
   async like(mediaId) {
-    console.log('like', mediaId);
     return this.request.post(`/web/likes/${mediaId}/like/`)
   }
 

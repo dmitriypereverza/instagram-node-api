@@ -22,7 +22,7 @@ export default class DefaultActionMaker extends EventEmitter2 implements ActionM
 
     for (const asyncAction of this.actions) {
       asyncAction.onAny((event, value) => {
-        this.emit(event, value);
+        return this.emitAsync(event, value);
       });
     }
   }

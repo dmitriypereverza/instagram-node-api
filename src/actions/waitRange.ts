@@ -19,9 +19,8 @@ export default class WaitRange extends EventEmitter2 implements ActionInterface 
   run(transactionBundle: TransactionBundleInterface, client: Instagram) {
     return new Promise(resolve => {
       const time = this.getDelaySeconds();
+      this.emit('log', `Сгенерировано врямя ожидания. Ждем ${time} секунд`);
       setTimeout(function () {
-        this.emit('log', `Сгенерировано врямя ожидания. Ждем ${time} секунд`);
-
         resolve();
       }, time * 1000);
     });

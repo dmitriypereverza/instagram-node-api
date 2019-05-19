@@ -4,6 +4,7 @@ import makeHummableRequestProxy from "../lib/HumanableRequests";
 import makeUserSource, { UserSourceConfig } from "../userSources";
 import makeActionMaker, { ActionMakerConfig } from "../actionMakers";
 import Scheduler, { ScheduleConfig } from "../scheduler";
+import db from "../db";
 
 export interface StrategyConfig {
   schedule: ScheduleConfig,
@@ -11,23 +12,40 @@ export interface StrategyConfig {
   actions: ActionMakerConfig
 }
 
-export interface BotConfig {
-  account: { username: string, password: string }
-  strategy: StrategyConfig
+interface LimitInterface {
+  value: number,
+  hours: number
 }
 
-function botBuild(config: BotConfig): Bot {
+export interface GeneralConfigInterface {
+  limits: {
+    like: LimitInterface
+    follow: LimitInterface
+    comment: LimitInterface
+  }
+}
+
+export interface BotConfig {
+  general: GeneralConfigInterface
+  account: { username: string, password: string }
+  strategies: { [name: string]: StrategyConfig }
+}
+
+function botBuild(config: BotConfig, strategy: string): Bot {
   const { username, password } = config.account;
   const client = new Instagram({ username, password, cookieStorePath: './store/cookies.json' });
   const instagramClient = makeHummableRequestProxy(client, 9) as Instagram;
 
-  const strategyConfig = config.strategy;
+  if (!config.strategies.hasOwnProperty(strategy)) {
+    throw new Error(`Стратегия не найдена в конфинурационный файл не найден. ${strategy}`);
+  }
+  const strategyConfig = config.strategies[strategy];
 
   const userSource = makeUserSource(strategyConfig.userSource);
   const actionMaker = makeActionMaker(strategyConfig.actions);
   const scheduler = new Scheduler(strategyConfig.schedule);
 
-  return new Bot(instagramClient, scheduler, userSource, actionMaker);
+  return new Bot(config.general, instagramClient, db, scheduler, userSource, actionMaker);
 }
 
 export default botBuild;

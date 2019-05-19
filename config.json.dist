@@ -14,7 +14,15 @@
           "data": ["draw", "paint"],
           "isCircle": true,
           "getPerOnce": 2
-        }
+        },
+        "filters": [
+            [ "isBusinessAccount", false ],
+            [ "isMyFollower", false ],
+            [ "followers", "more", 90 ],
+            [ "followings", "less", "followers" ],
+            [ "followings", "more", 50 ],
+            [ "media", "more", 40 ]
+        ]
       },
       "actions": {
         "items": [

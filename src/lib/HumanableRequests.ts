@@ -1,7 +1,6 @@
 
 const delayedMethods: string[] = [
   'follow',
-  'like',
   'getUserByUsername',
   'getUserIdPhotos',
   'getMediaByShortcode',
@@ -22,9 +21,14 @@ export default function makeHummableRequestProxy(obj, delayInSeconds) {
 function wrapper (obj, func, time: number) {
   return function () {
     const args = arguments;
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       delay(time).then(async function () {
-        resolve(await func.apply(obj, args));
+        try {
+          const result = await func.apply(obj, args);
+          resolve(result);
+        } catch (e) {
+          reject(e);
+        }
       });
     });
   }

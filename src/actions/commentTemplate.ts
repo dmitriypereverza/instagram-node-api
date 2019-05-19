@@ -26,7 +26,15 @@ export default class CommentTemplate extends EventEmitter2 implements ActionInte
   }
 
   run(transactionBundle: TransactionBundleInterface, client: Instagram) {
-    return new Promise(async resolve => {
+    return new Promise(async (resolve, reject) => {
+      const [ [ canFollow ] ] = await this.emitAsync('canComment');
+      if (!canFollow) {
+        reject({
+          code: 'limitExpired',
+          by: 'comment',
+          message: 'Досигнут лимит комментариев.',
+        });
+      }
 
       let template = this.getRandomOfList(this.templateList);
       template = template.replace(/\|/g, '~~');
@@ -41,10 +49,14 @@ export default class CommentTemplate extends EventEmitter2 implements ActionInte
       });
 
       const post = transactionBundle.posts[this.config.postNumber - 1];
-      await client.addComment(post.id, resultComment);
-      this.emit('log', `Написан сгенерированный комментарий [${resultComment}]`);
-
-      resolve();
+      try {
+        this.emit('log', `Пишем сгенерированный комментарий [${resultComment}]`);
+        await client.addComment(post.id, resultComment);
+        this.emit('action.comment', post.id);
+        resolve();
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 
