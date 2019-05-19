@@ -176,7 +176,10 @@ class Bot extends EventEmitter2 implements BotInterface {
     }
 
     if (e.statusCode.toString().charAt(0) == 4) {
-      this.emit('error.ban', e.statusCode);
+      this.emit('error.ban', e);
+      this.scheduler.wait(24 * 60 * 60);
+      this.emit('log.system',
+        `Был получен бан на одно из последних действий. Лучше сегодня не пользоваться услучами этого бота. \nЖдем 24 ч.`);
       return;
     }
   }
@@ -188,11 +191,11 @@ class Bot extends EventEmitter2 implements BotInterface {
         this.emit('log.system', `Достигнут лимит лайков. Ждем ${this.config.limits.like.hours} часов`);
         break;
       case 'follow':
-        this.scheduler.wait(this.config.limits.follow.hours * 60 * 60 * 60);
+        this.scheduler.wait(this.config.limits.follow.hours * 60 * 60);
         this.emit('log.system', `Достигнут лимит подписок. Ждем ${this.config.limits.follow.hours} часов`);
         break;
       case 'comment':
-        this.scheduler.wait(this.config.limits.comment.hours * 60 * 60 * 60);
+        this.scheduler.wait(this.config.limits.comment.hours * 60 * 60);
         this.emit('log.system', `Достигнут лимит комментариев. Ждем ${this.config.limits.comment.hours} часов`);
         break;
       default:

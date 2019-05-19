@@ -1,15 +1,16 @@
 import botBuild from "./src/botBuilder";
+import logger from "./src/logger";
 
 const config = require('./config.json');
 
 const bot = botBuild(config, 'traditional');
 
 bot.on('error.ban', text => {
-  console.log(`Бот говорит что дела плохо. ${text}`);
+  logger.error(`Бот говорит что дела плохо. ${text}`);
 });
 
 bot.on('log.*', function (text) {
-  console.log(`Бот говорит. ${text}`);
+  logger.debug(`Бот говорит. ${text}`);
 });
 
 bot.start();
