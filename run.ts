@@ -3,7 +3,7 @@ import logger from "./src/logger";
 
 const config = require('./config.json');
 
-const bot = botBuild(config, 'traditional');
+const bot = botBuild(config, 'wwhfz', 'traditional');
 
 bot.on('error.ban', text => {
   logger.error(`Бот говорит что дела плохо. ${text}`);

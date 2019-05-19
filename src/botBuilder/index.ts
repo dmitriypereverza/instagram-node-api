@@ -27,12 +27,12 @@ export interface GeneralConfigInterface {
 
 export interface BotConfig {
   general: GeneralConfigInterface
-  account: { username: string, password: string }
+  accounts: { [name: string]: { username: string, password: string }}
   strategies: { [name: string]: StrategyConfig }
 }
 
-function botBuild(config: BotConfig, strategy: string): Bot {
-  const { username, password } = config.account;
+function botBuild(config: BotConfig, accountCode: string, strategy: string): Bot {
+  const { username, password } = config.accounts[accountCode];
   const client = new Instagram({ username, password, cookieStorePath: './store/cookies.json' });
   const instagramClient = makeHummableRequestProxy(client, 9) as Instagram;
 
