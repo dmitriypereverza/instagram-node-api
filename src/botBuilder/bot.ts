@@ -74,7 +74,7 @@ class Bot extends EventEmitter2 implements BotInterface {
         const { value: likeCountLimit, hours: hoursLimit } = that.config.limits.like;
 
         let likeCount = await that.db.count({
-          time: { $gt: time() - hoursLimit * 60 },
+          time: { $gt: time() - hoursLimit * 60 * 60},
           action: 'action.like',
           account: that.instagramClient.credentials.username
         });
@@ -179,7 +179,7 @@ class Bot extends EventEmitter2 implements BotInterface {
       this.emit('error.ban', e);
       this.scheduler.wait(24 * 60 * 60);
       this.emit('log.system',
-        `Был получен бан на одно из последних действий. Лучше сегодня не пользоваться услучами этого бота. \nЖдем 24 ч.`);
+        `Был получен бан на одно из последних действий. Лучше сегодня не пользоваться услугами этого бота. \nЖдем 24 ч.`);
       return;
     }
   }

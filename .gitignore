@@ -10,3 +10,4 @@ node_modules/
 config.json
 store/*
 dist
+db/data/*
