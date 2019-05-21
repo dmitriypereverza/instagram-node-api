@@ -185,22 +185,12 @@ class Bot extends EventEmitter2 implements BotInterface {
   }
 
   limitExpiredHandler(type) {
-    switch (type) {
-      case 'like':
-        this.scheduler.wait(this.config.limits.like.hours * 60 * 60);
-        this.emit('log.system', `Достигнут лимит лайков. Ждем ${this.config.limits.like.hours} ч.`);
-        break;
-      case 'follow':
-        this.scheduler.wait(this.config.limits.follow.hours * 60 * 60);
-        this.emit('log.system', `Достигнут лимит подписок. Ждем ${this.config.limits.follow.hours} ч.`);
-        break;
-      case 'comment':
-        this.scheduler.wait(this.config.limits.comment.hours * 60 * 60);
-        this.emit('log.system', `Достигнут лимит комментариев. Ждем ${this.config.limits.comment.hours} ч.`);
-        break;
-      default:
-        throw new Error(`Передан неизвестный тип ошибки limitExpired ${type}`);
+    if (!['like', 'follow', 'comment'].includes(type)) {
+      throw new Error(`Передан неизвестный тип ошибки limitExpired ${type}`);
     }
+    this.scheduler.wait(this.config.limits[type].hours * 60 * 60 / 2);
+    this.emit('log.system', `Достигнут лимит действий типа [${type}]. Ждем ${this.config.limits[type].hours / 2} ч.`);
+
     this.startTimer();
   }
 }

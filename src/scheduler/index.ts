@@ -29,13 +29,16 @@ export default class Scheduler extends EventEmitter2 implements SchedulerInterfa
 
   start() {
     this.expirationTime = this.performDelay();
+    this.startTimer();
+  }
 
+  startTimer () {
     this.timer = setInterval(() => {
       this.tick();
     }, 1000);
   }
 
-  stop() {
+  stopTimer() {
     clearInterval(this.timer);
   }
 
@@ -48,9 +51,11 @@ export default class Scheduler extends EventEmitter2 implements SchedulerInterfa
   }
 
   wait(timeWait) {
+    this.stopTimer();
     this.expirationTime = time() + timeWait;
     console.log('expirationTime', this.expirationTime);
     this.timeExpired = false;
+    this.startTimer();
   }
 
   performDelay() {
@@ -66,7 +71,7 @@ export default class Scheduler extends EventEmitter2 implements SchedulerInterfa
 
     if (this.timeExpired) {
       this.emit('log', `Таймер истек.`);
-      this.stop();
+      this.stopTimer();
     }
   }
 }
