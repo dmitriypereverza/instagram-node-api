@@ -12,7 +12,8 @@ interface StateInterface {
 }
 
 interface BotInterface {
-  start: () => void
+  start: () => void,
+  stop: () => void,
 }
 
 class Bot extends EventEmitter2 implements BotInterface {
@@ -23,6 +24,8 @@ class Bot extends EventEmitter2 implements BotInterface {
   private timer;
   private readonly instagramClient: Instagram;
   private db: DbType;
+
+  private mustStop = false;
 
   private state: StateInterface = {
     isTransactionExecute: false
@@ -111,6 +114,20 @@ class Bot extends EventEmitter2 implements BotInterface {
         resolve(Number(countFollow) < followCountLimit);
       });
     });
+    this.actionMaker.on('canUnfollow', function () {
+      return new Promise(async function(resolve) {
+        const { value: unfollowCountLimit, hours: hoursLimit } = that.config.limits.unfollow;
+
+        const countFollow = await that.db.count({
+          time: { $gt: time() - hoursLimit * 60 * 60 },
+          action: 'action.unfollow',
+          account: that.instagramClient.credentials.username
+        });
+
+        console.log(`Кол во countUnfollow ${countFollow}/${unfollowCountLimit}`);
+        resolve(Number(countFollow) < unfollowCountLimit);
+      });
+    });
   }
 
   async start() {
@@ -118,7 +135,15 @@ class Bot extends EventEmitter2 implements BotInterface {
     this.startTimer();
   }
 
+  stop() {
+    this.mustStop = true;
+    this.stopTimer();
+  }
+
   private startTimer () {
+    if (this.mustStop) {
+      return;
+    }
     this.timer = setInterval(() => {
       this.tick();
     }, 1000);
@@ -144,7 +169,7 @@ class Bot extends EventEmitter2 implements BotInterface {
       return;
     }
 
-    if (this.state.isTransactionExecute) {
+    if (this.state.isTransactionExecute || this.mustStop) {
       return;
     }
     this.scheduler.start();
@@ -159,6 +184,7 @@ class Bot extends EventEmitter2 implements BotInterface {
     } catch (e) {
       this.stopTimer();
       this.errorHandle(e);
+      this.startTimer();
     }
     this.state.isTransactionExecute = false;
   }
@@ -175,7 +201,11 @@ class Bot extends EventEmitter2 implements BotInterface {
       return;
     }
 
-    if (e.statusCode.toString().charAt(0) == 4) {
+    if (e.statusCode == 404) {
+      this.emit('log.system', `Была получена 404 ошибка от сервера. [${e}]`);
+      return;
+    }
+    if (e.statusCode >= 400) {
       this.emit('error.ban', e);
       this.scheduler.wait(24 * 60 * 60);
       this.emit('log.system',
@@ -185,13 +215,11 @@ class Bot extends EventEmitter2 implements BotInterface {
   }
 
   limitExpiredHandler(type) {
-    if (!['like', 'follow', 'comment'].includes(type)) {
+    if (!['like', 'follow', 'comment', 'unfollow'].includes(type)) {
       throw new Error(`Передан неизвестный тип ошибки limitExpired ${type}`);
     }
     this.scheduler.wait(this.config.limits[type].hours * 60 * 60 / 2);
     this.emit('log.system', `Достигнут лимит действий типа [${type}]. Ждем ${this.config.limits[type].hours / 2} ч.`);
-
-    this.startTimer();
   }
 }
 

@@ -14,3 +14,9 @@ bot.on('log.*', function (text) {
 });
 
 bot.start();
+
+//
+// setTimeout(function () {
+//   console.log('STOP');
+//   bot.stop();
+// }, 10000);

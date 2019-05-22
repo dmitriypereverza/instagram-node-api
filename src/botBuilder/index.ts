@@ -21,6 +21,7 @@ export interface GeneralConfigInterface {
   limits: {
     like: LimitInterface
     follow: LimitInterface
+    unfollow: LimitInterface
     comment: LimitInterface
   }
 }

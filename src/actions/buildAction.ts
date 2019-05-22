@@ -5,6 +5,7 @@ import LikesRange from "./likesRange";
 import Follow from "./follow";
 import WaitRange from "./waitRange";
 import Comment from "./comment";
+import Unfollow from "./unfollow";
 import CommentTemplate from "./commentTemplate";
 
 export interface ActionInterface {
@@ -28,6 +29,8 @@ export default function buildActions ([ code, params ]): ActionInterface {
       return new LikesRange(params);
     case "follow":
       return new Follow(params);
+    case "unfollow":
+      return new Unfollow(params);
     default:
       throw new Error('Передан неизветный тип действия');
   }

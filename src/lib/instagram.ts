@@ -422,7 +422,7 @@ export default class Instagram {
     return this.request.post(`/web/friendships/${userId}/follow/`)
   }
 
-  async unfollow({ userId }) {
+  async unfollow(userId) {
     return this.request.post(`/web/friendships/${userId}/unfollow/`)
   }
 
