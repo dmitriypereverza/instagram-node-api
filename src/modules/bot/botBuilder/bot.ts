@@ -180,6 +180,9 @@ class Bot extends EventEmitter2 implements BotInterface {
     this.state.isTransactionExecute = true;
     try {
       const user = await this.userSource.getNext(this.instagramClient);
+      if (!user) {
+        this.mustStop = true;
+      }
       await this.actionMaker.runActions(user, this.instagramClient);
     } catch (e) {
       this.stopTimer();

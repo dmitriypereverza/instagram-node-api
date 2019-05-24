@@ -1,4 +1,4 @@
-import DefaultActionMaker from "./defaultActionMaker";
+import DefaultActionMaker from "./DefaultActionMaker";
 import buildActions from "../actions/buildAction";
 
 export interface ActionMakerInterface {

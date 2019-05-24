@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "build-ts": "tsc",
-    "start": "npm run serve",
+    "start": "ts-node server.ts",
     "serve": "node dist/server.js",
     "watch-node": "nodemon dist/server.js",
     "watch-ts": "tsc -w"
@@ -16,6 +16,7 @@
     "@types/eventemitter2": "^4.1.0",
     "@types/express": "^4.16.1",
     "@types/log4js": "^2.3.5",
+    "@types/mongoose": "^5.5.1",
     "@types/nedb": "^1.8.7",
     "@types/socket.io": "^2.1.2",
     "@types/ws": "^6.0.1",
@@ -27,6 +28,7 @@
     "fs": "0.0.1-security",
     "is-url": "^1.2.4",
     "log4js": "^4.2.0",
+    "mongoose": "^5.5.11",
     "nedb": "^1.8.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",

@@ -1,7 +1,7 @@
-import botBuild from "./src/botBuilder";
-import logger from "./src/logger";
+import botBuild from "./botBuilder";
+import logger from "./logger";
 
-const config = require('./config.json');
+const config = require('../../../config.json');
 
 const bot = botBuild(config, 'wwhfz', 'traditional');
 
@@ -14,9 +14,3 @@ bot.on('log.*', function (text) {
 });
 
 bot.start();
-
-//
-// setTimeout(function () {
-//   console.log('STOP');
-//   bot.stop();
-// }, 10000);
