@@ -2,13 +2,13 @@ require('dotenv').config();
 
 import mongoose from "mongoose";
 
-import app from "./src/routes";
+import api from "./src/routes";
 
 connect();
 
 const port = process.env.PORT || 3000;
 function listen() {
-  app.listen(port);
+  api.listen(port);
   console.log('Express app started on port ' + port);
 }
 
@@ -20,4 +20,4 @@ function connect() {
   return mongoose.connect(process.env.MONGODB_URL, { keepAlive: true, useNewUrlParser: true });
 }
 
-export default app;
+export default api;

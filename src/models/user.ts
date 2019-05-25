@@ -1,9 +1,14 @@
-import mongoose, { Schema } from "mongoose";
+import { prop, Typegoose } from "typegoose";
 
-const UserSchema = new Schema({
-  name: { type: String, default: '' },
-  email: { type: String, default: '' },
-  username: { type: String, default: '' },
-});
+class User extends Typegoose {
+  @prop({ required: true, unique: true })
+  username?: string;
 
-mongoose.model('User', UserSchema);
+  @prop({ required: true })
+  password?: string;
+}
+const UserModel = new User().getModelForClass(User);
+
+export type UserType = typeof UserModel;
+export default UserModel;
+
