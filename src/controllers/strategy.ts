@@ -1,21 +1,21 @@
 import { Request, Response } from "express";
 
 export function get (req: Request, res: Response) {
-  res.send('getBot');
+  res.send('getStrategy');
 }
 
 export function list (req: Request, res: Response) {
-  res.send('getBots');
+  res.send('getStrategy');
 }
 
 export function update (req: Request, res: Response) {
-  res.send('updateBot');
+  res.send('updateStrategy');
 }
 
 export function add (req: Request, res: Response) {
-  res.send('addBot');
+  res.send('addStrategy');
 }
 
 export function remove (req: Request, res: Response) {
-  res.send('removeBot');
+  res.send('removeStrategy');
 }

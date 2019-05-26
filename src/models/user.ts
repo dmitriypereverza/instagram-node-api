@@ -1,4 +1,4 @@
-import { prop, Typegoose } from "typegoose";
+import { Typegoose, prop } from "typegoose";
 
 class User extends Typegoose {
   @prop({ required: true, unique: true })
