@@ -12,10 +12,12 @@ export enum ActionType {
 }
 
 export interface IActionSettings extends Document {
+  title: string
   inputType: string
   name: string
 }
 const actionSettingsSchema = new Schema({
+  title: { type: String, required: true },
   inputType: { type: String, required: true },
   name: { type: String, required: true },
 }, { timestamps: true });
@@ -24,10 +26,12 @@ export const ActionSettings = mongoose.model<IActionSettings>('ActionSettings', 
 
 
 export interface IAction extends Document {
+  title: string
   actionType: ActionType
   actionSettings: IActionSettings[]
 }
 const actionSchema = new Schema({
+  title: { type: String },
   actionType: { type: String },
   actionSettings: [{ type: Schema.Types.ObjectId, ref: 'ActionSettings' }]
 }, { timestamps: true });

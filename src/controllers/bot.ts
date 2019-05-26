@@ -19,3 +19,11 @@ export function add (req: Request, res: Response) {
 export function remove (req: Request, res: Response) {
   res.send('removeBot');
 }
+
+export function targets (req: Request, res: Response) {
+  res.send('targetsBot');
+}
+
+export function actions (req: Request, res: Response) {
+  res.send('actionBot');
+}

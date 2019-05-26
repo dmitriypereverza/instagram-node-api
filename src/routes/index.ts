@@ -33,6 +33,8 @@ export default function buildRoutes(app) {
     .post('/:id', botController.update)
     .put('/', botController.add)
     .delete('/:id', botController.remove)
+    .get('/targets', botController.targets)
+    .get('/actions', botController.actions)
   );
   app.use('/user', Router()
     .post('/register', userController.register)
