@@ -1,7 +1,6 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-
-import User, { UserType } from "../models/user";
+import { User, IUser } from "../models/user";
 
 export default function (app) {
   app.use(passport.initialize());
@@ -11,7 +10,7 @@ export default function (app) {
     usernameField: 'email',
     passwordField: 'password'
   }, function(username, password, done){
-    User.findOne({ username : username}, function(err, user: UserType) {
+    User.findOne({ username : username}, function(err, user: IUser) {
       if (err) {
         done(err);
       }
@@ -24,7 +23,7 @@ export default function (app) {
       done(null, user);
     });
   }));
-  passport.serializeUser(function(user: UserType, done) {
+  passport.serializeUser(function(user: IUser, done) {
     // @ts-ignore
     done(null, user.id);
   });
