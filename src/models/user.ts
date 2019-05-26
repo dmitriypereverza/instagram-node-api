@@ -1,14 +1,16 @@
-import { Typegoose, prop } from "typegoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-class User extends Typegoose {
-  @prop({ required: true, unique: true })
-  username?: string;
-
-  @prop({ required: true })
-  password?: string;
+export interface IUser extends Document {
+  owner: IUser['_id']
+  login: string
+  password: string
 }
-const UserModel = new User().getModelForClass(User);
 
-export type UserType = typeof UserModel;
-export default UserModel;
+const userSchema = new Schema({
+  username: { type: String, required: true, unique: true },
+  email: { type: String, required: true },
+  password: { type: String, required: true },
+}, { timestamps: true });
+
+export const UserModel = mongoose.model<IUser>('User', userSchema);
 

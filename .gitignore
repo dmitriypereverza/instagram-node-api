@@ -11,3 +11,5 @@ config.json
 store/*
 dist
 db/data/*
+
+.migrate
