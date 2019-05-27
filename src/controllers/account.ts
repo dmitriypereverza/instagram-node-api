@@ -1,21 +1,25 @@
 import { Request, Response } from "express";
+import { Account } from "../models/account";
+import * as passport from "passport";
 
-export function get (req: Request, res: Response) {
-  res.send('getAccount');
+export async function get (req: Request, res: Response) {
+  const account = await Account.findById(req.params.id);
+  res.json({ account, user: req.user });
 }
 
-export function list (req: Request, res: Response) {
-  res.send('getAccounts');
+export async function list (req: Request, res: Response) {
+  const accounts = await Account.find({});
+  res.json(accounts);
 }
 
-export function update (req: Request, res: Response) {
+export async function update (req: Request, res: Response) {
   res.send('updateAccount');
 }
 
-export function add (req: Request, res: Response) {
+export async function add (req: Request, res: Response) {
   res.send('addAccount');
 }
 
-export function remove (req: Request, res: Response) {
+export async function remove (req: Request, res: Response) {
   res.send('removeAccount');
 }

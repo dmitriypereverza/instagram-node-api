@@ -4,7 +4,7 @@ import crypto from "crypto";
 // Packages
 
 import request from "request-promise-native";
-import { Cookie } from "@types/tough-cookie";
+import { Cookie } from "tough-cookie";
 
 import isUrl from "is-url";
 import useragentFromSeed from "useragent-from-seed";
