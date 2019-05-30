@@ -6,9 +6,10 @@ export interface IUser extends Document {
 }
 
 const userSchema = new Schema({
+  _id: Number,
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-}, { timestamps: true });
+}, { _id: false, timestamps: true });
 const AutoIncrement = require('mongoose-sequence')(mongoose);
-userSchema.plugin(AutoIncrement, {inc_field: 'id'});
+userSchema.plugin(AutoIncrement, {id: 'user_seq'});
 export const User = mongoose.model<IUser>('User', userSchema);

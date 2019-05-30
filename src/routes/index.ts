@@ -13,7 +13,7 @@ import { authMiddleware } from "../middleware/auth";
 export default function buildRoutes(app) {
   app = buildPassword(app);
 
-  app.use('/account', authMiddleware, Router()
+  app.use('/account', Router()
     .get('/:id', accountController.get)
     .get('/list', accountController.list)
     .post('/:id', accountController.update)
