@@ -20,7 +20,7 @@ export default function buildRoutes(app) {
     .put('/', accountController.add)
     .delete('/:id', accountController.remove)
   );
-  app.use('/strategy', authMiddleware, Router()
+  app.use('/strategy', Router()
     .get('/:id', strategyController.get)
     .get('/list', strategyController.list)
     .post('/:id', strategyController.update)

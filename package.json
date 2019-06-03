@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "build-ts": "tsc",
-    "start": "ts-node server.ts",
+    "start": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' server.ts",
     "migrate": "./node_modules/migrate/bin/migrate up --compiler=\"ts:./ts-migration_register.js\"",
     "serve": "node dist/server.js",
     "watch-node": "nodemon dist/server.js",
@@ -56,7 +56,7 @@
     "@types/dotenv": "^6.1.1",
     "@types/node": "^12.0.0",
     "@types/request-promise-native": "^1.0.16",
-    "nodemon": "^1.19.0",
+    "nodemon": "^1.19.1",
     "tslint": "^5.16.0",
     "typescript": "^3.4.5"
   }

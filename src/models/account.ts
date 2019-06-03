@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema } from "mongoose";
 
 import { IUser } from "./user";
 
@@ -6,6 +6,9 @@ export interface IAccount extends Document {
   owner: IUser['_id']
   login: string
   password: string
+}
+export interface IAccountModel extends Model<IAccount> {
+  findOneWithFilterByUser: (pipelines, userId: number) => any
 }
 
 const accountSchema = new Schema({
@@ -17,4 +20,23 @@ const accountSchema = new Schema({
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 accountSchema.plugin(AutoIncrement, {id: 'account_seq'});
 
-export const Account = mongoose.model<IAccount>('Account', accountSchema);
+accountSchema.statics.findOneWithFilterByUser = async function(pipelines, userId: number) {
+  const aggregate = await this.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "owner"
+      }
+    },
+    { $unwind: "$owner" },
+    { $match: { "owner._id": userId } },
+    ...pipelines
+  ]);
+  return aggregate.length
+    ? aggregate[0]
+    : null;
+};
+
+export const Account = mongoose.model<IAccount, IAccountModel>('Account', accountSchema);
