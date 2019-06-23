@@ -8,6 +8,7 @@ export interface IAccount extends Document {
   password: string
 }
 export interface IAccountModel extends Model<IAccount> {
+  findWithFilterByUser: (pipelines, userId: number) => any
   findOneWithFilterByUser: (pipelines, userId: number) => any
 }
 
@@ -20,8 +21,8 @@ const accountSchema = new Schema({
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 accountSchema.plugin(AutoIncrement, {id: 'account_seq'});
 
-accountSchema.statics.findOneWithFilterByUser = async function(pipelines, userId: number) {
-  const aggregate = await this.aggregate([
+accountSchema.statics.findWithFilterByUser = async function(pipelines, userId: number) {
+  return await this.aggregate([
     {
       $lookup: {
         from: "users",
@@ -34,6 +35,10 @@ accountSchema.statics.findOneWithFilterByUser = async function(pipelines, userId
     { $match: { "owner._id": userId } },
     ...pipelines
   ]);
+};
+
+accountSchema.statics.findOneWithFilterByUser = async function(pipelines, userId: number) {
+  const aggregate = await this.findWithFilterByUser(pipelines, userId);
   return aggregate.length
     ? aggregate[0]
     : null;

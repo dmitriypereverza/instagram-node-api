@@ -14,22 +14,22 @@ export default function buildRoutes(app) {
   app = buildPassword(app);
 
   app.use('/account', Router()
-    .get('/:id', accountController.get)
     .get('/list', accountController.list)
+    .get('/:id', accountController.get)
     .post('/:id', accountController.update)
     .put('/', accountController.add)
     .delete('/:id', accountController.remove)
   );
   app.use('/strategy', Router()
-    .get('/:id', strategyController.get)
     .get('/list', strategyController.list)
+    .get('/:id', strategyController.get)
     .post('/:id', strategyController.update)
     .put('/', strategyController.add)
     .delete('/:id', strategyController.remove)
   );
   app.use('/bot', authMiddleware, Router()
-    .get('/:id', botController.get)
     .get('/list', botController.list)
+    .get('/:id', botController.get)
     .post('/:id', botController.update)
     .put('/', botController.add)
     .delete('/:id', botController.remove)

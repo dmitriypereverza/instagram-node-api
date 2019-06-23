@@ -13,7 +13,7 @@ export async function get (req: Request, res: Response, next) {
 }
 
 export async function list (req: Request, res: Response) {
-  const accounts = await Account.findOneWithFilterByUser([], req.user._id);
+  const accounts = await Account.findWithFilterByUser([], req.user._id);
   res.json(accounts);
 }
 
