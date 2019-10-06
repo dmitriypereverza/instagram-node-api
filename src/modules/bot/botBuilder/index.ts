@@ -32,7 +32,7 @@ export interface BotConfig {
   strategies: { [name: string]: StrategyConfig }
 }
 
-function botBuild(config: BotConfig, accountCode: string, strategy: string): Bot {
+export default function botBuild(config: BotConfig, accountCode: string, strategy: string): Bot {
   const { username, password } = config.accounts[accountCode];
   const client = new Instagram({ username, password, cookieStorePath: './store/cookies.json' });
   const instagramClient = makeHummableRequestProxy(client, 9) as Instagram;
@@ -48,5 +48,3 @@ function botBuild(config: BotConfig, accountCode: string, strategy: string): Bot
 
   return new Bot(config.general, instagramClient, db, scheduler, userSource, actionMaker);
 }
-
-export default botBuild;

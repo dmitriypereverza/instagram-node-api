@@ -10,12 +10,12 @@ export function login (req: Request, res: Response, next) {
         return;
       }
       if (!user) {
-        res.redirect('/login');
+        res.send({ success: false });
       }
       req.logIn(user, function(err) {
         return err
           ? next(err)
-          : res.redirect('/');
+          : res.send({ success: true });
       })
     }
   )(req, res, next);
