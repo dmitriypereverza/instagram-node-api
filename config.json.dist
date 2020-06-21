@@ -1,5 +1,25 @@
 {
-"accounts": {
+  "general": {
+    "limits": {
+      "like": {
+        "hours": 1,
+        "value": 30
+      },
+      "follow": {
+        "hours": 1,
+        "value": 20
+      },
+      "unfollow": {
+        "hours": 1,
+        "value": 40
+      },
+      "comment": {
+        "hours": 1,
+        "value": 10
+      }
+    }
+  },
+  "accounts": {
     "wwhfz": {
       "username": "some",
       "password": "some_pswrd"
