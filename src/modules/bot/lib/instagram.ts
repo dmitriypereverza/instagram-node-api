@@ -1,7 +1,5 @@
-// Native
 import fs from "fs";
 import crypto from "crypto";
-// Packages
 
 import request from "request-promise-native";
 import { Cookie } from "tough-cookie";
@@ -9,7 +7,7 @@ import { Cookie } from "tough-cookie";
 import isUrl from "is-url";
 import useragentFromSeed from "useragent-from-seed";
 
-const baseUrl = 'https://www.instagram.com';
+const baseUrl = "https://www.instagram.com";
 
 import FileCookieStore from "tough-cookie-filestore2";
 
@@ -18,9 +16,9 @@ export default class Instagram {
   private request;
   private _sharedData;
 
-  constructor(
-    { username, password, cookieStorePath = '' },
-    { language = '', proxy = '', requestOptions = {} } = {}
+  constructor (
+    { username, password, cookieStorePath = "" },
+    { language = "", proxy = "", requestOptions = {} } = {}
   ) {
     this.credentials = {
       username,
@@ -30,29 +28,29 @@ export default class Instagram {
     let cookieStore = {};
     if (cookieStorePath) {
       if (!fs.existsSync(cookieStorePath)) {
-        fs.writeFileSync(cookieStorePath, '', { flag: 'w' });
+        fs.writeFileSync(cookieStorePath, "", { flag: "w" });
       }
       try {
         cookieStore = new FileCookieStore(cookieStorePath);
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     }
 
     const jar = request.jar(cookieStore);
-    jar.setCookie(request.cookie('ig_cb=1'), baseUrl);
-    const { value: csrftoken = '' } = jar.getCookies(baseUrl).find(({ key }) => key === 'csrftoken') || {};
+    jar.setCookie(request.cookie("ig_cb=1"), baseUrl);
+    const { value: csrftoken = "" } = jar.getCookies(baseUrl).find(({ key }) => key === "csrftoken") || {};
 
     const userAgent = useragentFromSeed(username);
     requestOptions = {
       baseUrl,
-      uri: '',
+      uri: "",
       headers: {
-        'User-Agent': userAgent,
-        'Accept-Language': language || 'en-US',
-        'X-Instagram-AJAX': 1,
-        'X-CSRFToken': csrftoken,
-        'X-Requested-With': 'XMLHttpRequest',
+        "User-Agent": userAgent,
+        "Accept-Language": language || "en-US",
+        "X-Instagram-AJAX": 1,
+        "X-CSRFToken": csrftoken,
+        "X-Requested-With": "XMLHttpRequest",
         Referer: baseUrl
       },
       proxy,
@@ -62,13 +60,13 @@ export default class Instagram {
     this.request = request.defaults(requestOptions)
   }
 
-  async login({ username = '', password = '' } = {}, { _sharedData = true } = {}) {
+  async login ({ username = "", password = "" } = {}, { _sharedData = true } = {}) {
     username = username || this.credentials.username;
     password = password || this.credentials.password;
 
     // Get CSRFToken from cookie before login
-    let value = '';
-    await this.request('/', { resolveWithFullResponse: true }).then(res => {
+    let value = "";
+    await this.request("/", { resolveWithFullResponse: true }).then(res => {
       const pattern = new RegExp(/(csrf_token":")\w+/);
       const matches = res.toJSON().body.match(pattern);
       value = matches[0].substring(13)
@@ -76,28 +74,28 @@ export default class Instagram {
 
     // Provide CSRFToken for login or challenge request
     this.request = this.request.defaults({
-      headers: { 'X-CSRFToken': value }
+      headers: { "X-CSRFToken": value }
     });
 
     // Login
-    const res = await this.request.post('/accounts/login/ajax/', {
+    const res = await this.request.post("/accounts/login/ajax/", {
       resolveWithFullResponse: true,
       form: { username, password }
     });
 
-    if (!res.headers['set-cookie']) {
-      throw new Error('No cookie')
+    if (!res.headers["set-cookie"]) {
+      throw new Error("No cookie")
     }
-    const cookies = res.headers['set-cookie'].map(Cookie.parse);
+    const cookies = res.headers["set-cookie"].map(Cookie.parse);
 
     // Get CSRFToken after successful login
     const { value: csrftoken } = cookies
-      .find(({ key }) => key === 'csrftoken')
+      .find(({ key }) => key === "csrftoken")
       .toJSON();
 
     // Provide CSRFToken to request
     this.request = this.request.defaults({
-      headers: { 'X-CSRFToken': csrftoken }
+      headers: { "X-CSRFToken": csrftoken }
     });
     this.credentials = {
       username,
@@ -114,7 +112,7 @@ export default class Instagram {
     return res.body
   }
 
-  async isLogined() {
+  async isLogined () {
     try {
       await this.getProfile();
       return true;
@@ -123,45 +121,45 @@ export default class Instagram {
     }
   }
 
-  async _getSharedData(url = '/') {
+  async _getSharedData (url = "/") {
     return this.request(url)
       .then(
-        html => html.split('window._sharedData = ')[1].split(';</script>')[0]
+        html => html.split("window._sharedData = ")[1].split(";</script>")[0]
       )
       .then(_sharedData => JSON.parse(_sharedData))
   }
 
-  async _getGis(path) {
+  async _getGis (path) {
     const { rhx_gis } = this._sharedData || (await this._getSharedData(path));
 
     return crypto
-      .createHash('md5')
+      .createHash("md5")
       .update(`${rhx_gis}:${path}`)
-      .digest('hex')
+      .digest("hex")
   }
 
-  async logout() {
-    return this.request('/accounts/logout/ajax/')
+  async logout () {
+    return this.request("/accounts/logout/ajax/")
   }
 
-  async getHome() {
-    return this.request('/?__a=1').then(data => data.graphql.user)
+  async getHome () {
+    return this.request("/?__a=1").then(data => data.graphql.user)
   }
 
-  async getUserByUsername(username) {
+  async getUserByUsername (username) {
     return this.request({
       uri: `/${username}/?__a=1`,
       headers: {
-        referer: baseUrl + '/' + username + '/',
-        'x-instagram-gis': await this._getGis(`/${username}/`)
+        referer: baseUrl + "/" + username + "/",
+        "x-instagram-gis": await this._getGis(`/${username}/`)
       }
     }).then(data => data.graphql.user)
   }
 
-  async getStoryReelFeed({ onlyStories = false } = {}) {
-    return this.request('/graphql/query/', {
+  async getStoryReelFeed ({ onlyStories = false } = {}) {
+    return this.request("/graphql/query/", {
       qs: {
-        query_hash: '60b755363b5c230111347a7a4e242001',
+        query_hash: "60b755363b5c230111347a7a4e242001",
         variables: JSON.stringify({
           only_stories: onlyStories
         })
@@ -172,15 +170,15 @@ export default class Instagram {
       .then(edges => edges.map(edge => edge.node))
   }
 
-  async getStoryReels({
-                        reelIds = [],
-                        tagNames = [],
-                        locationIds = [],
-                        precomposedOverlay = false
-                      } = {}) {
-    return this.request('/graphql/query/', {
+  async getStoryReels ({
+                         reelIds = [],
+                         tagNames = [],
+                         locationIds = [],
+                         precomposedOverlay = false
+                       } = {}) {
+    return this.request("/graphql/query/", {
       qs: {
-        query_hash: '297c491471fff978fa2ab83c0673a618',
+        query_hash: "297c491471fff978fa2ab83c0673a618",
         variables: JSON.stringify({
           reel_ids: reelIds,
           tag_names: tagNames,
@@ -191,10 +189,10 @@ export default class Instagram {
     }).then(data => data.data.reels_media)
   }
 
-  async getUserIdPhotos(id = '', first = 12, after = '') {
-    return this.request('/graphql/query/', {
+  async getUserIdPhotos (id = "", first = 12, after = "") {
+    return this.request("/graphql/query/", {
       qs: {
-        query_hash: '6305d415e36c0a5f0abb6daba312f2dd',
+        query_hash: "6305d415e36c0a5f0abb6daba312f2dd",
         variables: JSON.stringify({
           id,
           first,
@@ -205,10 +203,10 @@ export default class Instagram {
       .then(data => data.map(post => post.node))
   }
 
-  async getPhotosByHashtag({ hashtag = '', first = 12, after = '' } = {}) {
-    return this.request('/graphql/query/', {
+  async getPhotosByHashtag ({ hashtag = "", first = 12, after = "" } = {}) {
+    return this.request("/graphql/query/", {
       qs: {
-        query_hash: 'ded47faa9a1aaded10161a2ff32abb6b',
+        query_hash: "ded47faa9a1aaded10161a2ff32abb6b",
         variables: JSON.stringify({
           tag_name: hashtag,
           first,
@@ -218,42 +216,42 @@ export default class Instagram {
     }).then(data => data.data)
   }
 
-  async getPhotosByUsername({ username, first, after }) {
+  async getPhotosByUsername ({ username, first, after }) {
     const user = await this.getUserByUsername({ username });
     return this.getUserIdPhotos(user.id, first, after)
   }
 
-  async getStoryItemsByUsername({ username }) {
+  async getStoryItemsByUsername ({ username }) {
     const user = await this.getUserByUsername({ username });
     return this.getStoryItemsByReel({ reelId: user.id })
   }
 
-  async getStoryItemsByHashtag({ hashtag }) {
+  async getStoryItemsByHashtag ({ hashtag }) {
     const reels = await this.getStoryReels({ tagNames: [hashtag] });
     if (reels.length === 0) return [];
     return reels[0].items
   }
 
-  async getStoryItemsByLocation({ locationId }) {
+  async getStoryItemsByLocation ({ locationId }) {
     const reels = await this.getStoryReels({ locationIds: [locationId] });
     if (reels.length === 0) return [];
     return reels[0].items
   }
 
-  async getStoryItemsByReel({ reelId }) {
+  async getStoryItemsByReel ({ reelId }) {
     const reels = await this.getStoryReels({ reelIds: [reelId] });
     if (reels.length === 0) return [];
     return reels[0].items
   }
 
-  async markStoryItemAsSeen({
-                              reelMediaId,
-                              reelMediaOwnerId,
-                              reelId,
-                              reelMediaTakenAt,
-                              viewSeenAt
-                            }) {
-    return this.request.post('/stories/reel/seen', {
+  async markStoryItemAsSeen ({
+                               reelMediaId,
+                               reelMediaOwnerId,
+                               reelId,
+                               reelMediaTakenAt,
+                               viewSeenAt
+                             }) {
+    return this.request.post("/stories/reel/seen", {
       form: {
         reelMediaId,
         reelMediaOwnerId,
@@ -264,8 +262,8 @@ export default class Instagram {
     })
   }
 
-  async _getFollowData({ fieldName, queryHash, variables }) {
-    return this.request('/graphql/query/', {
+  async _getFollowData ({ fieldName, queryHash, variables }) {
+    return this.request("/graphql/query/", {
       qs: {
         query_hash: queryHash,
         variables: JSON.stringify(variables)
@@ -275,10 +273,10 @@ export default class Instagram {
       .then(({ edges }) => edges.map(edge => edge.node))
   }
 
-  async getFollowers(userId, first = 24) {
+  async getFollowers (userId, first = 24) {
     return this._getFollowData({
-      fieldName: 'edge_followed_by',
-      queryHash: '56066f031e6239f35a904ac20c9f37d9',
+      fieldName: "edge_followed_by",
+      queryHash: "56066f031e6239f35a904ac20c9f37d9",
       variables: {
         id: userId,
         first,
@@ -288,10 +286,10 @@ export default class Instagram {
     })
   }
 
-  async getFollowings(userId, first = 20, after = 0) {
+  async getFollowings (userId, first = 20, after = 0) {
     return this._getFollowData({
-      fieldName: 'edge_follow',
-      queryHash: '58712303d941c6855d4e888c5f0cd22f',
+      fieldName: "edge_follow",
+      queryHash: "58712303d941c6855d4e888c5f0cd22f",
       variables: {
         id: userId,
         first,
@@ -300,27 +298,27 @@ export default class Instagram {
     })
   }
 
-  async getActivity() {
-    return this.request('/accounts/activity/?__a=1').then(
+  async getActivity () {
+    return this.request("/accounts/activity/?__a=1").then(
       data => data.graphql.user
     )
   }
 
-  async getProfile() {
-    return this.request('/accounts/edit/?__a=1').then(data => data.form_data)
+  async getProfile () {
+    return this.request("/accounts/edit/?__a=1").then(data => data.form_data)
   }
 
-  async updateProfile({
-                        name = '',
-                        email = '',
-                        username,
-                        phoneNumber = '',
-                        gender,
-                        biography = '',
-                        website = '',
-                        similarAccountSuggestions = true
-                      }) {
-    return this.request.post('/accounts/edit/', {
+  async updateProfile ({
+                         name = "",
+                         email = "",
+                         username,
+                         phoneNumber = "",
+                         gender,
+                         biography = "",
+                         website = "",
+                         similarAccountSuggestions = true
+                       }) {
+    return this.request.post("/accounts/edit/", {
       form: {
         first_name: name,
         email,
@@ -334,127 +332,127 @@ export default class Instagram {
     })
   }
 
-  async changeProfilePhoto({ photo }) {
-    return this.request.post('/accounts/web_change_profile_picture/', {
+  async changeProfilePhoto ({ photo }) {
+    return this.request.post("/accounts/web_change_profile_picture/", {
       formData: {
         profile_pic: isUrl(photo) ? request(photo) : fs.createReadStream(photo)
       }
     })
   }
 
-  async deleteMedia({ mediaId }) {
+  async deleteMedia ({ mediaId }) {
     return this.request.post(`/create/${mediaId}/delete/`)
   }
 
-  async _uploadPhoto({ photo }) {
-    return this.request.post('/create/upload/photo/', {
+  async _uploadPhoto ({ photo }) {
+    return this.request.post("/create/upload/photo/", {
       formData: {
         upload_id: Date.now().toString(),
         photo: isUrl(photo) ? request(photo) : fs.createReadStream(photo),
-        media_type: '1'
+        media_type: "1"
       }
     })
   }
 
-  async uploadStory({ photo, caption = '' }) {
+  async uploadStory ({ photo, caption = "" }) {
     return this._uploadPhoto({ photo }).then(({ upload_id }) =>
-      this.request.post('/create/configure_to_story/', {
+      this.request.post("/create/configure_to_story/", {
         form: { upload_id, caption }
       })
     )
   }
 
-  async uploadPhoto({ photo, caption = '' }) {
+  async uploadPhoto ({ photo, caption = "" }) {
     return this._uploadPhoto({ photo }).then(({ upload_id }) =>
-      this.request.post('/create/configure/', {
+      this.request.post("/create/configure/", {
         form: { upload_id, caption }
       })
     )
   }
 
-  async getMediaFeedByLocation(locationId) {
+  async getMediaFeedByLocation (locationId) {
     return this.request(`/explore/locations/${locationId}/?__a=1`).then(
       data => data.graphql.location.edge_location_to_media.edges
     ).then(data => data.map(geo => geo.node))
   }
 
-  async getMediaFeedByHashtag(hashtag) {
+  async getMediaFeedByHashtag (hashtag) {
     return this.request(`/explore/tags/${encodeURIComponent(hashtag)}/?__a=1`)
       .then(data => data.graphql.hashtag.edge_hashtag_to_media.edges)
       .then(data => data.map(tag => tag.node))
   }
 
-  async locationSearch({ query, latitude, longitude }) {
-    return this.request('/location_search/', {
+  async locationSearch ({ query, latitude, longitude }) {
+    return this.request("/location_search/", {
       qs: { search_query: query, latitude, longitude }
     }).then(data => data.venues)
   }
 
-  async getMediaByShortcode(shortcode) {
+  async getMediaByShortcode (shortcode) {
     return this.request(`/p/${shortcode}/?__a=1`).then(
       data => data.graphql.shortcode_media
     )
   }
 
-  async addComment(mediaId, text, replyToCommentId = null) {
+  async addComment (mediaId, text, replyToCommentId = null) {
     return this.request.post(`/web/comments/${mediaId}/add/`, {
       form: { comment_text: text, replied_to_comment_id: replyToCommentId }
     })
   }
 
-  async deleteComment({ mediaId, commentId }) {
+  async deleteComment ({ mediaId, commentId }) {
     return this.request.post(`/web/comments/${mediaId}/delete/${commentId}/`)
   }
 
-  async getChallenge({ challengeUrl }) {
+  async getChallenge ({ challengeUrl }) {
     return this.request(`${challengeUrl}?__a=1`)
   }
 
-  async approve({ userId }) {
+  async approve ({ userId }) {
     return this.request.post(`/web/friendships/${userId}/approve/`)
   }
 
-  async ignore({ userId }) {
+  async ignore ({ userId }) {
     return this.request.post(`/web/friendships/${userId}/ignore/`)
   }
 
-  async follow(userId) {
+  async follow (userId) {
     return this.request.post(`/web/friendships/${userId}/follow/`)
   }
 
-  async unfollow(userId) {
+  async unfollow (userId) {
     return this.request.post(`/web/friendships/${userId}/unfollow/`)
   }
 
-  async block({ userId }) {
+  async block ({ userId }) {
     return this.request.post(`/web/friendships/${userId}/block/`)
   }
 
-  async unblock({ userId }) {
+  async unblock ({ userId }) {
     return this.request.post(`/web/friendships/${userId}/unblock/`)
   }
 
-  async like(mediaId) {
+  async like (mediaId) {
     return this.request.post(`/web/likes/${mediaId}/like/`)
   }
 
-  async unlike({ mediaId }) {
+  async unlike ({ mediaId }) {
     return this.request.post(`/web/likes/${mediaId}/unlike/`)
   }
 
-  async save({ mediaId }) {
+  async save ({ mediaId }) {
     return this.request.post(`/web/save/${mediaId}/save/`)
   }
 
-  async unsave({ mediaId }) {
+  async unsave ({ mediaId }) {
     return this.request.post(`/web/save/${mediaId}/unsave/`)
   }
 
-  async search({ query, context = 'blended' }) {
-    return this.request('/web/search/topsearch/', { qs: { query, context } })
+  async search ({ query, context = "blended" }) {
+    return this.request("/web/search/topsearch/", { qs: { query, context } })
   }
 
-  async _getPosts({ userId, perPage = 12, nextPageToken }) {
+  async _getPosts ({ userId, perPage = 12, nextPageToken }) {
     const variables = JSON.stringify({
       id: userId,
       first: perPage,
@@ -462,13 +460,13 @@ export default class Instagram {
     });
     const options = {
       qs: {
-        query_hash: '42323d64886122307be10013ad2dcc44',
+        query_hash: "42323d64886122307be10013ad2dcc44",
         variables
       }
     };
 
     return this.request
-      .get('/graphql/query/', options)
+      .get("/graphql/query/", options)
       .then(response => response.data.user)
   }
 }

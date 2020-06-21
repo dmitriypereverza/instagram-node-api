@@ -1,4 +1,10 @@
 {
+"accounts": {
+    "wwhfz": {
+      "username": "some",
+      "password": "some_pswrd"
+    }
+  },
   "strategies": {
     "traditional": {
       "schedule": {

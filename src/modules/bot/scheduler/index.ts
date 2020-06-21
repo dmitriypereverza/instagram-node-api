@@ -53,7 +53,6 @@ export default class Scheduler extends EventEmitter2 implements SchedulerInterfa
   wait(timeWait) {
     this.stopTimer();
     this.expirationTime = time() + timeWait;
-    console.log('expirationTime', this.expirationTime);
     this.timeExpired = false;
     this.startTimer();
   }

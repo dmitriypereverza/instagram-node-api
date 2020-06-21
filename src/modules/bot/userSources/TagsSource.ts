@@ -19,17 +19,17 @@ export default class TagsSource extends EventEmitter2 implements UserSourceInter
 
   async getNext(client: Instagram) {
     this.client = client;
+
     let tag = await this.getNextTag() as any;
     if (!tag) {
       return;
     }
 
-
-
     tag = await this.client.getMediaByShortcode(tag.shortcode);
 
+    this.emit('log', `Запрос на пользователя ${tag.owner.username}`);
     const user = await this.client.getUserByUsername(tag.owner.username);
-    this.emit('log', `Получили пользователя по тегу ${user.username}`);
+    this.emit('log', `Получили пользователя ${user.username}`);
     return user;
   };
 
@@ -50,13 +50,12 @@ export default class TagsSource extends EventEmitter2 implements UserSourceInter
     }
     const tag = this.tagList.shift();
 
-    this.emit('log', `Получаем пользователей по тегу ${tag}`);
+    this.emit('log', `Получаем пользователей по хеш тегу ${tag}`);
     let tags = await this.client.getMediaFeedByHashtag(tag);
 
     if (this.config.getPerOnce) {
       tags = tags.slice(0, this.config.getPerOnce);
     }
-
 
     return tags;
   }

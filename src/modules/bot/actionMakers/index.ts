@@ -11,6 +11,6 @@ export interface ActionMakerConfig {
 }
 
 export default function makeActionMaker(config: ActionMakerConfig) {
-  const actions = config.items.map(action => buildActions(action));
+  const actions = config.items.map(buildActions);
   return new DefaultActionMaker(config, actions);
 };

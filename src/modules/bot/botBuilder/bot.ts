@@ -150,11 +150,13 @@ class Bot extends EventEmitter2 implements BotInterface {
   }
 
   private async login () {
-    if (!await this.instagramClient.isLogined()) {
-      this.emit('log.system', 'Входим в систему.');
-      await this.instagramClient.login();
-      this.emit('log.system', 'Успешный вход.');
-    } else this.emit('log.system', 'Вход не требуется.');
+    if (await this.instagramClient.isLogined()) {
+      this.emit('log.system', 'Вход не требуется.');
+      return;
+    }
+    this.emit('log.system', 'Входим в систему.');
+    await this.instagramClient.login();
+    this.emit('log.system', 'Успешный вход.');
   }
 
   stopTimer() {

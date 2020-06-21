@@ -35,10 +35,10 @@ export interface BotConfig {
 export default function botBuild(config: BotConfig, accountCode: string, strategy: string): Bot {
   const { username, password } = config.accounts[accountCode];
   const client = new Instagram({ username, password, cookieStorePath: './store/cookies.json' });
-  const instagramClient = makeHummableRequestProxy(client, 9) as Instagram;
+  const instagramClient = makeHummableRequestProxy(client, 9);
 
   if (!config.strategies.hasOwnProperty(strategy)) {
-    throw new Error(`Стратегия не найдена в конфинурационный файл не найден. ${strategy}`);
+    throw new Error(`Стратегия не найдена в конфигурационный файл не найден. ${strategy}`);
   }
   const strategyConfig = config.strategies[strategy];
 

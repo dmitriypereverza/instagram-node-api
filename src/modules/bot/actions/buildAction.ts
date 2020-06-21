@@ -32,6 +32,6 @@ export default function buildActions ([ code, params ]): ActionInterface {
     case "unfollow":
       return new Unfollow(params);
     default:
-      throw new Error('Передан неизветный тип действия');
+      throw new Error('Передан неизвестный тип действия');
   }
 }

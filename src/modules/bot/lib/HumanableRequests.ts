@@ -6,11 +6,10 @@ const delayedMethods: string[] = [
   'getMediaByShortcode',
 ];
 
-export default function makeHummableRequestProxy(obj, delayInSeconds) {
+export default function makeHummableRequestProxy<T extends object>(obj: T, delayInSeconds): T {
   return new Proxy(obj, {
     get: function(target, prop: string) {
       if (delayedMethods.includes(prop)) {
-        console.log(prop);
         return wrapper(obj, target[prop], delayInSeconds * 1000);
       }
       return target[prop];
@@ -35,8 +34,6 @@ function wrapper (obj, func, time: number) {
 }
 
 const delay = time => new Promise(resolve => {
-  setTimeout(async () => {
-    return resolve();
-  }, time);
+  setTimeout(async () => resolve(), time);
 });
 
